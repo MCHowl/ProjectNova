@@ -11,8 +11,10 @@ public class HeatController : MonoBehaviour {
 	private bool isFrozen;
 
 	public float mass, heatCapacity;
-	public float heatThreshold_freeze, heatThreshold_unfreeze; //heatThreshold_unfreeze acts as maximum Heat
+	public float heatThreshold_freeze, heatThreshold_unfreeze;
 
+	public Sprite frozen, unfrozen;
+	private SpriteRenderer spriteRenderer;
 
 	void Start() {
 		if (gameObject.tag == "Entity" || gameObject.tag == "Tile") {
@@ -27,13 +29,18 @@ public class HeatController : MonoBehaviour {
 			Debug.LogWarning("'HeatController' script attached to invalid object " + gameObject.name);
 		}
 
+		spriteRenderer = GetComponent<SpriteRenderer>();
+
 	}
 
 	void LateUpdate() {
 		if (currentHeat <= heatThreshold_freeze) {
 			isFrozen = true;
+			spriteRenderer.sprite = frozen;
+
 		} else if (currentHeat >= heatThreshold_unfreeze) {
 			isFrozen = false;
+			spriteRenderer.sprite = unfrozen;
 		}
 	}
 

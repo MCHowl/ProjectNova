@@ -11,8 +11,8 @@ public class BoardController : MonoBehaviour {
 	public GameObject[] tiles_Wall;
 	public GameObject[] tiles_Floor;
 
-	private int board_Width = 100;
-	private int board_Height = 100;
+	private int board_Width = 20;
+	private int board_Height = 20;
 
 	//private GameObject[][] gameTiles;
 
