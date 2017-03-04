@@ -14,7 +14,7 @@ public class BoardController : MonoBehaviour {
 	private int board_Width = 20;
 	private int board_Height = 20;
 
-	//private GameObject[][] gameTiles;
+	private bool[,] spawnableArea;
 
 	private Transform holder_GameBoard;
 	private Transform holder_Entities_Mobile;
@@ -30,16 +30,16 @@ public class BoardController : MonoBehaviour {
 
 	private void SetupBoard() {
 		// Instantiate gameTile holder
-		//gameTiles = new GameObject[board_Width][board_Height];
+		spawnableArea = new bool[board_Width, board_Height];
 
 		// Instantiate Floor Tiles
 		for (int i = 0; i < board_Width; i++) {
 			for (int j = 0; j < board_Height; j++) {
 
 				Vector3 newTilePostition = new Vector3 (i, j, 0.0f);
-				GameObject newTile = InstantiateObject(tiles_Floor[Random.Range (0, tiles_Floor.Length)],
-														newTilePostition, holder_GameBoard);
-				//gameTiles[i][j] = newTile;
+				InstantiateObject(tiles_Floor[Random.Range (0, tiles_Floor.Length)],
+									newTilePostition, holder_GameBoard);
+				spawnableArea[i,j] = true;
 			}
 		}
 
@@ -64,30 +64,37 @@ public class BoardController : MonoBehaviour {
 	}
 
 	private void SpawnEntities(int staticCount, int mobileCount, int sourceCount) {
-		Vector3 staticSpawn = getRandomBoardPosition();
-		InstantiateObject(entities_Static [Random.Range(0, entities_Static.Length)], staticSpawn, holder_Entities_Static);
+		for (int i = 0; i < sourceCount; i++) {
+			InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], getRandomVaildBoardPosition(), holder_Entities_Source);
+		}
 
-		Vector3 mobileSpawn = getRandomBoardPosition();
-		InstantiateObject(entities_Mobile [Random.Range(0, entities_Mobile.Length)], mobileSpawn, holder_Entities_Mobile);
+		for (int i = 0; i < staticCount; i++) {
+			InstantiateObject(entities_Static [Random.Range(0, entities_Static.Length)], getRandomVaildBoardPosition(), holder_Entities_Static);
+		}
+
+		for (int i = 0; i < mobileCount; i++) {
+			InstantiateObject(entities_Mobile [Random.Range(0, entities_Mobile.Length)], getRandomVaildBoardPosition(), holder_Entities_Mobile);
+		}
 	}
 
 	private void SpawnPlayer() {
 		//Choose a random point for the player to spawn
-		Vector3 playerSpawn = getRandomBoardPosition();
+		Vector3 playerSpawn = getRandomVaildBoardPosition();
 		Instantiate (player, playerSpawn, Quaternion.identity);
-
-		//Remove Tile from spawnableArea
 
 		//Spawn a source next to the player
 		float spawn_x;
 		if (playerSpawn.x <= 0) {
-			spawn_x = playerSpawn.x++;
+			spawn_x = playerSpawn.x + 1;
 		} else {
-			spawn_x = playerSpawn.x--;
+			spawn_x = playerSpawn.x - 1;
 		}
 
 		Vector3 sourceSpawn = new Vector3(spawn_x, playerSpawn.y, playerSpawn.z);
 		InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], sourceSpawn, holder_Entities_Source);
+
+		//Remove Tile from spawnableArea
+		spawnableArea[(int)spawn_x, (int)playerSpawn.y] = false;
 
 	}
 
@@ -95,9 +102,6 @@ public class BoardController : MonoBehaviour {
 	/**
 	 * Helper Functions
 	 **/
-	private void clearArea() {
-	}
-
 	private GameObject InstantiateObject(GameObject newObject, Vector3 position, Transform parent) {
 		GameObject newInstance = Instantiate (newObject, position, Quaternion.identity);
 		newInstance.transform.SetParent(parent);
@@ -105,14 +109,35 @@ public class BoardController : MonoBehaviour {
 		return newInstance;
 	}
 
-	private Vector3 getRandomBoardPosition() {
-		return new Vector3 (Random.Range (0, board_Width), Random.Range (0, board_Height), 0);
+	private Vector3 getRandomVaildBoardPosition() {
+		bool isSearching = true;
+		int count = 0;
+		int x, y;
+
+		while (isSearching) {
+			x = Random.Range (0, board_Width);
+			y = Random.Range (0, board_Height);
+
+			if (spawnableArea[x, y]) {
+				spawnableArea[x, y] = false;
+				return new Vector3 (x, y, 0);
+			} else {
+				count++;
+
+				if (count >= Mathf.Sqrt (board_Width * board_Height)) {
+					Debug.LogError ("Unable to find valid spawn position");
+					return new Vector3 (-1, -1, -1);
+				}
+			}
+		}
+		Debug.LogError ("You are not supposed to reach this line of code");
+		return new Vector3 (-1, -1, -1);
 	}
 
 	public void SetupGameArea() {
 		InstantiateHolders();
 		SetupBoard();
 		SpawnPlayer();
-		SpawnEntities (0, 0, 0);
+		SpawnEntities (10, 5, 2);
 	}
 }
