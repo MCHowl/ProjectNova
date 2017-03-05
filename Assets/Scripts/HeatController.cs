@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class HeatController : MonoBehaviour {
 
+	public delegate void ObjectUnfrozen(GameObject gameObject);
+	public static event ObjectUnfrozen ObjectUnfrozenEvent;
+
+	public delegate void ObjectFrozen(GameObject gameObject);
+	public static event ObjectFrozen ObjectFrozenEvent;
+
 	private const float zeroTemp = -273.15f;
 	private const float minHeat = 0f;
 
@@ -17,30 +23,27 @@ public class HeatController : MonoBehaviour {
 	private SpriteRenderer spriteRenderer;
 
 	void Start() {
+		spriteRenderer = GetComponent<SpriteRenderer>();
+
 		if (gameObject.tag == "Entity" || gameObject.tag == "Tile") {
 			currentHeat = heatThreshold_freeze;
 			maxHeat = heatThreshold_unfreeze;
-			isFrozen = true;
+			setFrozen();
 		} else if (gameObject.tag == "Player") {
 			currentHeat = heatThreshold_unfreeze;
 			maxHeat = heatThreshold_unfreeze;
-			isFrozen = false;
+			setUnfrozen();
 		} else {
 			Debug.LogWarning("'HeatController' script attached to invalid object " + gameObject.name);
 		}
-
-		spriteRenderer = GetComponent<SpriteRenderer>();
-
 	}
 
 	void LateUpdate() {
-		if (currentHeat <= heatThreshold_freeze) {
-			isFrozen = true;
-			spriteRenderer.sprite = frozen;
+		if (currentHeat <= heatThreshold_freeze && !getIsFrozen()) {
+			setFrozen();
 
-		} else if (currentHeat >= heatThreshold_unfreeze) {
-			isFrozen = false;
-			spriteRenderer.sprite = unfrozen;
+		} else if (currentHeat >= heatThreshold_unfreeze && getIsFrozen()) {
+			setUnfrozen();
 		}
 	}
 
@@ -85,5 +88,17 @@ public class HeatController : MonoBehaviour {
 
 	public bool getIsFrozen() {
 		return isFrozen;
+	}
+
+	private void setFrozen() {
+		isFrozen = true;
+		spriteRenderer.sprite = frozen;
+		ObjectFrozenEvent(gameObject);
+	}
+
+	private void setUnfrozen() {
+		isFrozen = false;
+		spriteRenderer.sprite = unfrozen;
+		ObjectUnfrozenEvent(gameObject);
 	}
 }
