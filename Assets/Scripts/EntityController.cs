@@ -4,23 +4,59 @@ using UnityEngine;
 
 public class EntityController : MonoBehaviour {
 
-	HeatController heatController;
-	Rigidbody2D rb2d;
+	public LayerMask blockingLayer;
+
+	private HeatController heatController;
+	private BoxCollider2D boxCollider;
+	private Rigidbody2D rb2d;
+
+	private Vector2[] directionList = { new Vector2(0,0),
+										new Vector2(0,1),
+										new Vector2(1,0),
+										new Vector2(0,-1),
+										new Vector2(-1,0)};
+
+	private float moveDelay = 2f;
+	private float moveTime = 0.5f;
+	private float inverseMoveTime;
 
 	private int move;
 
 	void Start () {
 		heatController = GetComponent<HeatController>();
+		boxCollider = GetComponent<BoxCollider2D>();
 		rb2d = GetComponent<Rigidbody2D>();
+
+		inverseMoveTime = 1f / moveTime;
+
+
+		InvokeRepeating("AttemptMove", moveDelay, moveDelay);
 	}
 
-	void FixedUpdate () {
+	void AttemptMove() {
 		if (!heatController.getIsFrozen()) {
-			//Move Randomly
-			//Refer to 2D Rougelike Enemy Movement
-			Vector2 newPos = new Vector2 (rb2d.position.x + Mathf.Pow(-1, move), rb2d.position.y);
-			rb2d.MovePosition (newPos);		
-			move++;
+			Vector2 start = transform.position;
+			Vector2 end = start + directionList [Random.Range (0, directionList.Length)];
+
+			boxCollider.enabled = false;
+			RaycastHit2D hit = Physics2D.Linecast(start, end, blockingLayer);
+			boxCollider.enabled = true;
+
+			if (hit.transform == null) {
+				StartCoroutine(Move(end));
+			}
+		}
+	}
+
+	IEnumerator Move(Vector3 end) {
+		float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+
+		while (sqrRemainingDistance > float.Epsilon) {
+			Vector3 newPosition = Vector3.MoveTowards (rb2d.position, end, inverseMoveTime * Time.deltaTime);
+			rb2d.MovePosition (newPosition);
+			sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+
+			yield return null;
 		}
 	}
 }
