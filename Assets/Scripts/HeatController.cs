@@ -62,6 +62,11 @@ public class HeatController : MonoBehaviour {
 
 	public void Burn(HeatController target, HeatController heatReceiver) {
 		transferHeat(target.currentHeat, target, heatReceiver);
+
+		if (target.getIsFrozen()) {
+			target.setUnfrozen();
+		}
+
 		Destroy(target.gameObject);
 	}
 
