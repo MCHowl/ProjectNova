@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		//Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
+		Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
 
 		if (inCollisionWith != null) {
 			HeatController destinationHeatController = inCollisionWith.GetComponent<HeatController>();
@@ -45,8 +45,10 @@ public class PlayerController : MonoBehaviour {
 		float moveHorizontal = Input.GetAxis("Horizontal");
 		float moveVertical = Input.GetAxis("Vertical");
 
-		Vector2 movement = new Vector2 (moveHorizontal, moveVertical);
-		rb2d.AddForce(movement * speed);
+		if (!heatController.getIsFrozen ()) {
+			Vector2 movement = new Vector2 (moveHorizontal, moveVertical);
+			rb2d.AddForce (movement * speed);
+		}
 
 	}
 
@@ -66,5 +68,17 @@ public class PlayerController : MonoBehaviour {
 
 	private void ResetCollision() {
 		inCollisionWith = null;
+	}
+
+	public void RespawnAtLocation(Transform transform) {
+		StartCoroutine (spawnCoroutine (transform));
+	}
+
+	public IEnumerator spawnCoroutine(Transform transform) {
+		yield return new WaitForSeconds(1);
+		ResetCollision ();
+		heatController.setHeatToMaximum();
+		rb2d.position = new Vector2(transform.position.x, transform.position.y);
+		yield return null;
 	}
 }

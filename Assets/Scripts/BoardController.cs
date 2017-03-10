@@ -16,6 +16,8 @@ public class BoardController : MonoBehaviour {
 
 	private bool[,] spawnableArea;
 
+	private PlayerController playerController;
+
 	private Transform holder_GameBoard;
 	private Transform holder_Entities_Mobile;
 	private Transform holder_Entities_Static;
@@ -80,7 +82,8 @@ public class BoardController : MonoBehaviour {
 	private void SpawnPlayer() {
 		//Choose a random point for the player to spawn
 		Vector3 playerSpawn = getRandomVaildBoardPosition();
-		Instantiate (player, playerSpawn, Quaternion.identity);
+		GameObject newPlayer = Instantiate (player, playerSpawn, Quaternion.identity);
+		playerController = newPlayer.GetComponent<PlayerController>();
 
 		//Spawn a source next to the player
 		float spawn_x;
@@ -96,6 +99,19 @@ public class BoardController : MonoBehaviour {
 		//Remove Tile from spawnableArea
 		spawnableArea[(int)spawn_x, (int)playerSpawn.y] = false;
 
+	}
+
+	public bool RespawnPlayer() {
+		int remainingSourceCount = holder_Entities_Source.childCount;
+		if (remainingSourceCount > 0) {
+			Transform respawnSourceTransform = holder_Entities_Source.GetChild (Random.Range (0, remainingSourceCount));
+			playerController.RespawnAtLocation(respawnSourceTransform);
+			Destroy (respawnSourceTransform.gameObject);
+			return true;
+		} else {
+			Destroy (playerController);
+			return false;
+		}
 	}
 
 

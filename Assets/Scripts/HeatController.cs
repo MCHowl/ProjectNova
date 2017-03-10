@@ -89,6 +89,9 @@ public class HeatController : MonoBehaviour {
 
 	public void setHeatToMaximum() {
 		currentHeat = maxHeat;
+		if (isFrozen) {
+			setUnfrozen();
+		}
 	}
 
 	public bool getIsFrozen() {

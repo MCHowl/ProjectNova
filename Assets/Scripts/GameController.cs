@@ -36,18 +36,22 @@ public class GameController : MonoBehaviour {
 			remaining_Entities += 1;
 		} else if (gameObject.CompareTag("Tile")) {
 			remaining_Tiles += 1;
+		} else if (gameObject.CompareTag ("Player")) {
+			if (!boardController.RespawnPlayer()) {
+				Debug.Log ("Game Over");
+			}
 		}
 
-		Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
+		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 	}
 
 	private void decrementFrozenCount(GameObject gameObject) {
-		if (gameObject.CompareTag("Entity")) {
+		if (gameObject.CompareTag ("Entity")) {
 			remaining_Entities -= 1;
-		} else if (gameObject.CompareTag("Tile")) {
+		} else if (gameObject.CompareTag ("Tile")) {
 			remaining_Tiles -= 1;
-		}
+		} 
 
-		Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
+		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 	}
 }
