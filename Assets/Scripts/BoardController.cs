@@ -105,8 +105,8 @@ public class BoardController : MonoBehaviour {
 		int remainingSourceCount = holder_Entities_Source.childCount;
 		if (remainingSourceCount > 0) {
 			Transform respawnSourceTransform = holder_Entities_Source.GetChild (Random.Range (0, remainingSourceCount));
-			playerController.RespawnAtLocation(respawnSourceTransform);
-			Destroy (respawnSourceTransform.gameObject);
+			playerController.RespawnAtLocation(respawnSourceTransform.position.x, respawnSourceTransform.position.y);
+			Destroy(respawnSourceTransform.gameObject);
 			return true;
 		} else {
 			Destroy (playerController);

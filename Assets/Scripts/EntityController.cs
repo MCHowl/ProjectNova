@@ -20,15 +20,12 @@ public class EntityController : MonoBehaviour {
 	private float moveTime = 0.5f;
 	private float inverseMoveTime;
 
-	private int move;
-
 	void Start () {
 		heatController = GetComponent<HeatController>();
 		boxCollider = GetComponent<BoxCollider2D>();
 		rb2d = GetComponent<Rigidbody2D>();
 
 		inverseMoveTime = 1f / moveTime;
-
 
 		InvokeRepeating("AttemptMove", moveDelay, moveDelay);
 	}
