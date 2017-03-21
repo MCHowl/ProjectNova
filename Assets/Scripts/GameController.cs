@@ -9,6 +9,10 @@ public class GameController : MonoBehaviour {
 	private PlayerController playerInstance;
 
 	private int remaining_Tiles = 0;
+	private int total_Tiles;
+
+	private float timePerTile = 2.0f;
+	private float gameEndTime;
 
 	void Awake() {
 		if (instance == null) {
@@ -19,7 +23,7 @@ public class GameController : MonoBehaviour {
 
 		DontDestroyOnLoad(this.gameObject);
 		boardController = GetComponent<BoardController>();
-		InitGame();
+		InitGame(6);
 	}
 
 	void OnEnable() {
@@ -27,8 +31,19 @@ public class GameController : MonoBehaviour {
 		HeatController.ObjectUnfrozenEvent += decrementFrozenCount;
 	}
 
-	void InitGame() {
-		boardController.SetupGameArea();
+	void Start() {
+		total_Tiles = boardController.getTileCount();
+		gameEndTime = total_Tiles * timePerTile;
+	}
+
+	void Update() {
+		if (Time.time > gameEndTime) {
+			playerInstance.FreezePlayer();
+		}
+	}
+
+	void InitGame(int sourceCount) {
+		boardController.SetupGameArea(sourceCount);
 		playerInstance = boardController.getPlayer();
 	}
 

@@ -11,6 +11,7 @@ public class BoardController : MonoBehaviour {
 
 	private PlayerController playerController;
 
+	private int tile_Count;
 	private int board_Width = 20;
 	private int board_Height = 20;
 
@@ -18,10 +19,12 @@ public class BoardController : MonoBehaviour {
 	private GameObject[,] gameBoard;
 
 	private Transform holder_GameBoard;
+	private Transform holder_GameBoarder;
 	private Transform holder_Entities_Source;
 
 	private void InstantiateHolders() {
 		holder_GameBoard = new GameObject ("Board").transform;
+		holder_GameBoarder = new GameObject ("Walls").transform;
 		holder_Entities_Source = new GameObject ("Source Entities").transform;
 	}
 
@@ -48,7 +51,7 @@ public class BoardController : MonoBehaviour {
 				// Build full row for top and bottom of map
 				for (int i = -1; i < board_Width + 1; i++) {
 					InstantiateObject(tiles_Wall[Random.Range (0, tiles_Wall.Length)],
-										new Vector3 (i, j, 0.0f), holder_GameBoard);
+										new Vector3 (i, j, 0.0f), holder_GameBoarder);
 
 				}
 			} else {
@@ -56,7 +59,7 @@ public class BoardController : MonoBehaviour {
 				InstantiateObject(tiles_Wall[Random.Range (0, tiles_Wall.Length)],
 									new Vector3 (-1, j, 0.0f), holder_GameBoard);
 				InstantiateObject(tiles_Wall[Random.Range (0, tiles_Wall.Length)],
-									new Vector3 (board_Width, j, 0.0f), holder_GameBoard);
+									new Vector3 (board_Width, j, 0.0f), holder_GameBoarder);
 			}
 		}
 	}
@@ -127,11 +130,13 @@ public class BoardController : MonoBehaviour {
 		return new Vector3 (-1, -1, -1);
 	}
 
-	public void SetupGameArea() {
+	public void SetupGameArea(int sourceCount) {
+		tile_Count = board_Width * board_Height - sourceCount - 1;
+
 		InstantiateHolders();
 		SetupBoard();
 		SpawnPlayer();
-		SpawnEntities (6);
+		SpawnEntities (sourceCount);
 	}
 
 	/**
@@ -139,5 +144,9 @@ public class BoardController : MonoBehaviour {
 	 **/
 	public PlayerController getPlayer(){
 		return playerController;
+	}
+
+	public int getTileCount() {
+		return tile_Count;
 	}
 }
