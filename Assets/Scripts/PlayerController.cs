@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour {
 	private GameObject inCollisionWith = null;
 
 	private Vector2 collisionVector;
-	private float moveDistance = 0.1f;
+	private float moveDistance = 1.0f;
 
 	private float moveTime = 0.1f;
 	private float inverseMoveTime;
@@ -63,18 +63,16 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter2D(Collision2D other) {
+	void EnterCollision(Collider2D other) {
 		if (other.gameObject.CompareTag("Wall")) {
 			return;
 		} else if (other.gameObject.CompareTag("Entity")) {
 			inCollisionWith = other.gameObject;
+			Debug.Log ("In collision with " + other.gameObject.name + "\nPress 'R' to unfreeze, Press 'B' to burn");
 		} else if (other.gameObject.CompareTag("Source")) {
 			heatController.setHeatToMaximum();
+			Debug.Log ("Heat restored");
 		}
-	}
-
-	void OnCollisionExit2D() {
-		ResetCollision();
 	}
 
 	private void ResetCollision() {
@@ -87,6 +85,10 @@ public class PlayerController : MonoBehaviour {
 
 	public void AttemptMove(float moveHorizontal, float moveVertical) {
 		if (!heatController.getIsFrozen () && isMove) {
+			if (moveHorizontal != 0) {
+				moveVertical = 0;
+			}
+
 			Vector2 movement = new Vector2 (moveHorizontal * moveDistance, moveVertical * moveDistance);
 			Vector2 collisionCheck = new Vector2 ((moveDistance + collisionVector.x / 2) * moveHorizontal,
 													(moveDistance + collisionVector.y / 2) * moveVertical);
@@ -103,7 +105,10 @@ public class PlayerController : MonoBehaviour {
 
 			if (hit.transform == null) {
 				isMove = false;
-				StartCoroutine (Move (end));
+				ResetCollision();
+				StartCoroutine(Move (end));
+			} else {
+				EnterCollision(hit.collider);
 			}
 		}
 	}

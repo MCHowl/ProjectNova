@@ -53,5 +53,9 @@ public class GameController : MonoBehaviour {
 		} 
 
 		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
+
+		if (remaining_Tiles == 0 && remaining_Entities == 0) {
+			Debug.Log ("Game Over. You Win");
+		}
 	}
 }
