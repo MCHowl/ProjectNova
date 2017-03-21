@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
+		//Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
 
 		if (inCollisionWith != null) {
 			HeatController targetHeatController = inCollisionWith.GetComponent<HeatController>();
@@ -110,5 +110,9 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		isMove = true;
+	}
+
+	public void FreezePlayer() {
+		heatController.setIsFrozen(true);
 	}
 }

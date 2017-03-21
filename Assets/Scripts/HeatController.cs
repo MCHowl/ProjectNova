@@ -77,10 +77,13 @@ public class HeatController : MonoBehaviour {
 		return ((mass * heatCapacity * zeroTemp) + heat) / (mass * heatCapacity);
 	}
 
-	public void setHeatToMaximum() {
-		currentHeat = maxHeat;
-		if (isFrozen) {
-			setUnfrozen();
+	public void setIsFrozen(bool state) {
+		if (getIsFrozen() != state) {
+			if (state) {
+				currentHeat = heatThreshold_freeze;
+			} else {
+				currentHeat = heatThreshold_unfreeze;
+			}
 		}
 	}
 

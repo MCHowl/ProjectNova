@@ -9,10 +9,13 @@ public class BoardController : MonoBehaviour {
 	public GameObject[] tiles_Wall;
 	public GameObject[] tiles_Floor;
 
+	private PlayerController playerController;
+
 	private int board_Width = 20;
 	private int board_Height = 20;
 
 	private bool[,] spawnableArea;
+	private GameObject[,] gameBoard;
 
 	private Transform holder_GameBoard;
 	private Transform holder_Entities_Source;
@@ -25,14 +28,15 @@ public class BoardController : MonoBehaviour {
 	private void SetupBoard() {
 		// Instantiate gameTile holder
 		spawnableArea = new bool[board_Width, board_Height];
+		gameBoard = new GameObject[board_Width, board_Height];
 
 		// Instantiate Floor Tiles
 		for (int i = 0; i < board_Width; i++) {
 			for (int j = 0; j < board_Height; j++) {
 
 				Vector3 newTilePostition = new Vector3 (i, j, 0.0f);
-				InstantiateObject(tiles_Floor[Random.Range (0, tiles_Floor.Length)],
-									newTilePostition, holder_GameBoard);
+				gameBoard[i,j] = InstantiateObject(tiles_Floor[Random.Range (0, tiles_Floor.Length)],
+													newTilePostition, holder_GameBoard);
 				spawnableArea[i,j] = true;
 			}
 		}
@@ -59,14 +63,17 @@ public class BoardController : MonoBehaviour {
 
 	private void SpawnEntities(int sourceCount) {
 		for (int i = 0; i < sourceCount; i++) {
-			InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], getRandomVaildBoardPosition(), holder_Entities_Source);
+			Vector3 spawnPosition = getRandomVaildBoardPosition();
+			InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], spawnPosition, holder_Entities_Source);
+			Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
 		}
 	}
 
 	private void SpawnPlayer() {
 		//Choose a random point for the player to spawn
 		Vector3 playerSpawn = getRandomVaildBoardPosition();
-		Instantiate (player, playerSpawn, Quaternion.identity);
+		GameObject playerInstance = Instantiate (player, playerSpawn, Quaternion.identity);
+		playerController = playerInstance.GetComponent<PlayerController>();
 
 		//Spawn a source next to the player
 		float spawn_x;
@@ -81,6 +88,7 @@ public class BoardController : MonoBehaviour {
 
 		//Remove Tile from spawnableArea
 		spawnableArea[(int)spawn_x, (int)playerSpawn.y] = false;
+		Destroy(gameBoard [(int)spawn_x, (int)playerSpawn.y]);
 
 	}
 
@@ -124,5 +132,12 @@ public class BoardController : MonoBehaviour {
 		SetupBoard();
 		SpawnPlayer();
 		SpawnEntities (6);
+	}
+
+	/**
+	 * Getters & Setters
+	 **/
+	public PlayerController getPlayer(){
+		return playerController;
 	}
 }
