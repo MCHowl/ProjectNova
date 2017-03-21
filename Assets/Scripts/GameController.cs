@@ -8,7 +8,6 @@ public class GameController : MonoBehaviour {
 	private BoardController boardController;
 
 	private int remaining_Tiles = 0;
-	private int remaining_Entities = 0;
 
 	void Awake() {
 		if (instance == null) {
@@ -32,29 +31,23 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void incrementFrozenCount(GameObject gameObject) {
-		if (gameObject.CompareTag("Entity")) {
-			remaining_Entities += 1;
-		} else if (gameObject.CompareTag("Tile")) {
+		if (gameObject.CompareTag("Tile")) {
 			remaining_Tiles += 1;
 		} else if (gameObject.CompareTag ("Player")) {
-			if (!boardController.RespawnPlayer()) {
-				Debug.Log ("Game Over");
-			}
+			Debug.Log ("Game Over");
 		}
 
 		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 	}
 
 	private void decrementFrozenCount(GameObject gameObject) {
-		if (gameObject.CompareTag ("Entity")) {
-			remaining_Entities -= 1;
-		} else if (gameObject.CompareTag ("Tile")) {
+		if (gameObject.CompareTag ("Tile")) {
 			remaining_Tiles -= 1;
 		} 
 
 		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 
-		if (remaining_Tiles == 0 && remaining_Entities == 0) {
+		if (remaining_Tiles == 0) {
 			Debug.Log ("Game Over. You Win");
 		}
 	}

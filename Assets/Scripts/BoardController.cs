@@ -6,8 +6,6 @@ public class BoardController : MonoBehaviour {
 
 	public GameObject player;
 	public GameObject[] entities_Source;
-	public GameObject[] entities_Static;
-	public GameObject[] entities_Mobile;
 	public GameObject[] tiles_Wall;
 	public GameObject[] tiles_Floor;
 
@@ -16,17 +14,11 @@ public class BoardController : MonoBehaviour {
 
 	private bool[,] spawnableArea;
 
-	private PlayerController playerController;
-
 	private Transform holder_GameBoard;
-	private Transform holder_Entities_Mobile;
-	private Transform holder_Entities_Static;
 	private Transform holder_Entities_Source;
 
 	private void InstantiateHolders() {
 		holder_GameBoard = new GameObject ("Board").transform;
-		holder_Entities_Mobile = new GameObject ("Mobile Entities").transform;
-		holder_Entities_Static = new GameObject ("Static Entities").transform;
 		holder_Entities_Source = new GameObject ("Source Entities").transform;
 	}
 
@@ -65,25 +57,16 @@ public class BoardController : MonoBehaviour {
 		}
 	}
 
-	private void SpawnEntities(int staticCount, int mobileCount, int sourceCount) {
+	private void SpawnEntities(int sourceCount) {
 		for (int i = 0; i < sourceCount; i++) {
 			InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], getRandomVaildBoardPosition(), holder_Entities_Source);
-		}
-
-		for (int i = 0; i < staticCount; i++) {
-			InstantiateObject(entities_Static [Random.Range(0, entities_Static.Length)], getRandomVaildBoardPosition(), holder_Entities_Static);
-		}
-
-		for (int i = 0; i < mobileCount; i++) {
-			InstantiateObject(entities_Mobile [Random.Range(0, entities_Mobile.Length)], getRandomVaildBoardPosition(), holder_Entities_Mobile);
 		}
 	}
 
 	private void SpawnPlayer() {
 		//Choose a random point for the player to spawn
 		Vector3 playerSpawn = getRandomVaildBoardPosition();
-		GameObject newPlayer = Instantiate (player, playerSpawn, Quaternion.identity);
-		playerController = newPlayer.GetComponent<PlayerController>();
+		Instantiate (player, playerSpawn, Quaternion.identity);
 
 		//Spawn a source next to the player
 		float spawn_x;
@@ -100,20 +83,6 @@ public class BoardController : MonoBehaviour {
 		spawnableArea[(int)spawn_x, (int)playerSpawn.y] = false;
 
 	}
-
-	public bool RespawnPlayer() {
-		int remainingSourceCount = holder_Entities_Source.childCount;
-		if (remainingSourceCount > 0) {
-			Transform respawnSourceTransform = holder_Entities_Source.GetChild (Random.Range (0, remainingSourceCount));
-			playerController.RespawnAtLocation(respawnSourceTransform.position.x, respawnSourceTransform.position.y);
-			Destroy(respawnSourceTransform.gameObject);
-			return true;
-		} else {
-			Destroy (playerController);
-			return false;
-		}
-	}
-
 
 	/**
 	 * Helper Functions
@@ -154,6 +123,6 @@ public class BoardController : MonoBehaviour {
 		InstantiateHolders();
 		SetupBoard();
 		SpawnPlayer();
-		SpawnEntities (10, 5, 2);
+		SpawnEntities (6);
 	}
 }

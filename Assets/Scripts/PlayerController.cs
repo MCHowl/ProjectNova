@@ -30,26 +30,19 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		//Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
+		Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
 
 		if (inCollisionWith != null) {
-			HeatController destinationHeatController = inCollisionWith.GetComponent<HeatController>();
+			HeatController targetHeatController = inCollisionWith.GetComponent<HeatController>();
 
-			if (destinationHeatController != null) {
-				if (destinationHeatController.getIsFrozen()) {
-					if (Input.GetKeyDown(KeyCode.R)) {
-						//Unfreeze Object
-						heatController.Unfreeze(destinationHeatController, heatController);
+			if (targetHeatController != null) {
+				if (inCollisionWith.CompareTag("Source")) {
+					if (Input.GetKeyDown(KeyCode.Space)) {
+						heatController.Unfreeze(heatController, targetHeatController);
 					}
 				}
-
-				if (Input.GetKeyDown(KeyCode.B)) {
-					//Burn Object
-					heatController.Burn(destinationHeatController, heatController);
-					ResetCollision();
-				}
 			} else {
-				Debug.LogWarning("Unable to find 'HeatController' script on " + inCollisionWith.name);
+				Debug.LogError("Unable to find 'HeatController' script on " + inCollisionWith.name);
 			}
 		}
 	}
@@ -66,21 +59,14 @@ public class PlayerController : MonoBehaviour {
 	void EnterCollision(Collider2D other) {
 		if (other.gameObject.CompareTag("Wall")) {
 			return;
-		} else if (other.gameObject.CompareTag("Entity")) {
+		} else {
 			inCollisionWith = other.gameObject;
-			Debug.Log ("In collision with " + other.gameObject.name + "\nPress 'R' to unfreeze, Press 'B' to burn");
-		} else if (other.gameObject.CompareTag("Source")) {
-			heatController.setHeatToMaximum();
-			Debug.Log ("Heat restored");
+			Debug.Log ("In collision with " + inCollisionWith.name);
 		}
 	}
 
 	private void ResetCollision() {
 		inCollisionWith = null;
-	}
-
-	public void RespawnAtLocation(float x, float y) {
-		StartCoroutine (spawnCoroutine (x, y));
 	}
 
 	public void AttemptMove(float moveHorizontal, float moveVertical) {
@@ -124,13 +110,5 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		isMove = true;
-	}
-
-	private IEnumerator spawnCoroutine(float x, float y) {
-		yield return new WaitForSeconds(1);
-		ResetCollision ();
-		heatController.setHeatToMaximum();
-		rb2d.position = new Vector2(x, y);
-		yield return null;
 	}
 }

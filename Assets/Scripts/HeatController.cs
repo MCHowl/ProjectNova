@@ -25,11 +25,11 @@ public class HeatController : MonoBehaviour {
 	void Start() {
 		spriteRenderer = GetComponent<SpriteRenderer>();
 
-		if (gameObject.tag == "Entity" || gameObject.tag == "Tile") {
+		if (gameObject.CompareTag("Tile")) {
 			currentHeat = heatThreshold_freeze;
 			maxHeat = heatThreshold_unfreeze;
 			setFrozen();
-		} else if (gameObject.tag == "Player") {
+		} else if (gameObject.CompareTag("Player") || gameObject.CompareTag("Source")) {
 			currentHeat = heatThreshold_unfreeze;
 			maxHeat = heatThreshold_unfreeze;
 			setUnfrozen();
@@ -58,16 +58,6 @@ public class HeatController : MonoBehaviour {
 
 		source.currentHeat = Mathf.Max(minHeat, source.currentHeat - heatTransferred);
 		destination.currentHeat = Mathf.Min(maxHeat, destination.currentHeat + heatTransferred);
-	}
-
-	public void Burn(HeatController target, HeatController heatReceiver) {
-		transferHeat(target.currentHeat, target, heatReceiver);
-
-		if (target.getIsFrozen()) {
-			target.setUnfrozen();
-		}
-
-		Destroy(target.gameObject);
 	}
 
 	public void Unfreeze(HeatController target, HeatController heatSource) {
