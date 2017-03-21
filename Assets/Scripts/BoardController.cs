@@ -6,41 +6,40 @@ public class BoardController : MonoBehaviour {
 
 	public GameObject player;
 	public GameObject[] entities_Source;
-	public GameObject[] entities_Static;
-	public GameObject[] entities_Mobile;
 	public GameObject[] tiles_Wall;
 	public GameObject[] tiles_Floor;
 
+	private PlayerController playerController;
+
+	private int tile_Count;
 	private int board_Width = 20;
 	private int board_Height = 20;
 
 	private bool[,] spawnableArea;
-
-	private PlayerController playerController;
+	private GameObject[,] gameBoard;
 
 	private Transform holder_GameBoard;
-	private Transform holder_Entities_Mobile;
-	private Transform holder_Entities_Static;
+	private Transform holder_GameBoarder;
 	private Transform holder_Entities_Source;
 
 	private void InstantiateHolders() {
 		holder_GameBoard = new GameObject ("Board").transform;
-		holder_Entities_Mobile = new GameObject ("Mobile Entities").transform;
-		holder_Entities_Static = new GameObject ("Static Entities").transform;
+		holder_GameBoarder = new GameObject ("Walls").transform;
 		holder_Entities_Source = new GameObject ("Source Entities").transform;
 	}
 
 	private void SetupBoard() {
 		// Instantiate gameTile holder
 		spawnableArea = new bool[board_Width, board_Height];
+		gameBoard = new GameObject[board_Width, board_Height];
 
 		// Instantiate Floor Tiles
 		for (int i = 0; i < board_Width; i++) {
 			for (int j = 0; j < board_Height; j++) {
 
 				Vector3 newTilePostition = new Vector3 (i, j, 0.0f);
-				InstantiateObject(tiles_Floor[Random.Range (0, tiles_Floor.Length)],
-									newTilePostition, holder_GameBoard);
+				gameBoard[i,j] = InstantiateObject(tiles_Floor[Random.Range (0, tiles_Floor.Length)],
+													newTilePostition, holder_GameBoard);
 				spawnableArea[i,j] = true;
 			}
 		}
@@ -52,7 +51,7 @@ public class BoardController : MonoBehaviour {
 				// Build full row for top and bottom of map
 				for (int i = -1; i < board_Width + 1; i++) {
 					InstantiateObject(tiles_Wall[Random.Range (0, tiles_Wall.Length)],
-										new Vector3 (i, j, 0.0f), holder_GameBoard);
+										new Vector3 (i, j, 0.0f), holder_GameBoarder);
 
 				}
 			} else {
@@ -60,30 +59,24 @@ public class BoardController : MonoBehaviour {
 				InstantiateObject(tiles_Wall[Random.Range (0, tiles_Wall.Length)],
 									new Vector3 (-1, j, 0.0f), holder_GameBoard);
 				InstantiateObject(tiles_Wall[Random.Range (0, tiles_Wall.Length)],
-									new Vector3 (board_Width, j, 0.0f), holder_GameBoard);
+									new Vector3 (board_Width, j, 0.0f), holder_GameBoarder);
 			}
 		}
 	}
 
-	private void SpawnEntities(int staticCount, int mobileCount, int sourceCount) {
+	private void SpawnEntities(int sourceCount) {
 		for (int i = 0; i < sourceCount; i++) {
-			InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], getRandomVaildBoardPosition(), holder_Entities_Source);
-		}
-
-		for (int i = 0; i < staticCount; i++) {
-			InstantiateObject(entities_Static [Random.Range(0, entities_Static.Length)], getRandomVaildBoardPosition(), holder_Entities_Static);
-		}
-
-		for (int i = 0; i < mobileCount; i++) {
-			InstantiateObject(entities_Mobile [Random.Range(0, entities_Mobile.Length)], getRandomVaildBoardPosition(), holder_Entities_Mobile);
+			Vector3 spawnPosition = getRandomVaildBoardPosition();
+			InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], spawnPosition, holder_Entities_Source);
+			Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
 		}
 	}
 
 	private void SpawnPlayer() {
 		//Choose a random point for the player to spawn
 		Vector3 playerSpawn = getRandomVaildBoardPosition();
-		GameObject newPlayer = Instantiate (player, playerSpawn, Quaternion.identity);
-		playerController = newPlayer.GetComponent<PlayerController>();
+		GameObject playerInstance = Instantiate (player, playerSpawn, Quaternion.identity);
+		playerController = playerInstance.GetComponent<PlayerController>();
 
 		//Spawn a source next to the player
 		float spawn_x;
@@ -98,22 +91,9 @@ public class BoardController : MonoBehaviour {
 
 		//Remove Tile from spawnableArea
 		spawnableArea[(int)spawn_x, (int)playerSpawn.y] = false;
+		Destroy(gameBoard [(int)spawn_x, (int)playerSpawn.y]);
 
 	}
-
-	public bool RespawnPlayer() {
-		int remainingSourceCount = holder_Entities_Source.childCount;
-		if (remainingSourceCount > 0) {
-			Transform respawnSourceTransform = holder_Entities_Source.GetChild (Random.Range (0, remainingSourceCount));
-			playerController.RespawnAtLocation(respawnSourceTransform.position.x, respawnSourceTransform.position.y);
-			Destroy(respawnSourceTransform.gameObject);
-			return true;
-		} else {
-			Destroy (playerController);
-			return false;
-		}
-	}
-
 
 	/**
 	 * Helper Functions
@@ -150,10 +130,23 @@ public class BoardController : MonoBehaviour {
 		return new Vector3 (-1, -1, -1);
 	}
 
-	public void SetupGameArea() {
+	public void SetupGameArea(int sourceCount) {
+		tile_Count = board_Width * board_Height - sourceCount - 1;
+
 		InstantiateHolders();
 		SetupBoard();
 		SpawnPlayer();
-		SpawnEntities (10, 5, 2);
+		SpawnEntities (sourceCount);
+	}
+
+	/**
+	 * Getters & Setters
+	 **/
+	public PlayerController getPlayer(){
+		return playerController;
+	}
+
+	public int getTileCount() {
+		return tile_Count;
 	}
 }

@@ -6,9 +6,13 @@ public class GameController : MonoBehaviour {
 
 	public static GameController instance = null;
 	private BoardController boardController;
+	private PlayerController playerInstance;
 
 	private int remaining_Tiles = 0;
-	private int remaining_Entities = 0;
+	private int total_Tiles;
+
+	private float timePerTile = 2.0f;
+	private float gameEndTime;
 
 	void Awake() {
 		if (instance == null) {
@@ -19,7 +23,7 @@ public class GameController : MonoBehaviour {
 
 		DontDestroyOnLoad(this.gameObject);
 		boardController = GetComponent<BoardController>();
-		InitGame();
+		InitGame(6);
 	}
 
 	void OnEnable() {
@@ -27,35 +31,47 @@ public class GameController : MonoBehaviour {
 		HeatController.ObjectUnfrozenEvent += decrementFrozenCount;
 	}
 
-	void InitGame() {
-		boardController.SetupGameArea();
+	void Start() {
+		total_Tiles = boardController.getTileCount();
+		gameEndTime = total_Tiles * timePerTile;
+	}
+
+	void Update() {
+		if (Time.time > gameEndTime) {
+			playerInstance.FreezePlayer();
+		}
+	}
+
+	void InitGame(int sourceCount) {
+		boardController.SetupGameArea(sourceCount);
+		playerInstance = boardController.getPlayer();
 	}
 
 	private void incrementFrozenCount(GameObject gameObject) {
-		if (gameObject.CompareTag("Entity")) {
-			remaining_Entities += 1;
-		} else if (gameObject.CompareTag("Tile")) {
+		if (gameObject.CompareTag("Tile")) {
 			remaining_Tiles += 1;
 		} else if (gameObject.CompareTag ("Player")) {
-			if (!boardController.RespawnPlayer()) {
-				Debug.Log ("Game Over");
-			}
+			Debug.Log ("You Lose");
+			GameOver();
 		}
 
 		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 	}
 
 	private void decrementFrozenCount(GameObject gameObject) {
-		if (gameObject.CompareTag ("Entity")) {
-			remaining_Entities -= 1;
-		} else if (gameObject.CompareTag ("Tile")) {
+		if (gameObject.CompareTag ("Tile")) {
 			remaining_Tiles -= 1;
 		} 
 
 		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 
-		if (remaining_Tiles == 0 && remaining_Entities == 0) {
-			Debug.Log ("Game Over. You Win");
+		if (remaining_Tiles == 0) {
+			Debug.Log ("You Win");
+			GameOver();
 		}
+	}
+
+	private void GameOver(){
+		Debug.Log("Game Over");
 	}
 }
