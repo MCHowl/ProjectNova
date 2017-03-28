@@ -1,18 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
 	public static GameController instance = null;
 	private BoardController boardController;
 	private PlayerController playerInstance;
+	private HeatController playerInstanceHeat;
 
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
 	private float timePerTile = 2.0f;
 	private float gameEndTime;
+
+	private Text playerInfo;
+	private Text tileInfo;
+	private Text timeInfo;
 
 	void Awake() {
 		if (instance == null) {
@@ -23,7 +29,13 @@ public class GameController : MonoBehaviour {
 
 		DontDestroyOnLoad(this.gameObject);
 		boardController = GetComponent<BoardController>();
+
+		playerInfo = (GameObject.Find("Player Text")).GetComponent<Text>();
+		tileInfo = (GameObject.Find("Tile Text")).GetComponent<Text>();
+		timeInfo = (GameObject.Find("Time Text")).GetComponent<Text>();
+
 		InitGame(6);
+
 	}
 
 	void OnEnable() {
@@ -34,6 +46,10 @@ public class GameController : MonoBehaviour {
 	void Start() {
 		total_Tiles = boardController.getTileCount();
 		gameEndTime = total_Tiles * timePerTile;
+
+		playerInfo.text = "";
+		timeInfo.text = "";
+		tileInfo.text = "";
 	}
 
 	void Update() {
@@ -41,6 +57,11 @@ public class GameController : MonoBehaviour {
 		if (Time.time > gameEndTime) {
 			playerInstance.FreezePlayer();
 		}
+
+		//Update Player Heat & Time
+		int remainingTime = (int)(gameEndTime - Time.time);
+		timeInfo.text = "Remaining Time: " + remainingTime + "s";
+		playerInfo.text = "Remaining Heat: " + playerInstanceHeat.getCurrentHeat();
 
 		//Mouse Over Information
 		if (Input.GetButtonDown("Fire1")) {
@@ -53,14 +74,19 @@ public class GameController : MonoBehaviour {
 				if (selectedObject != null) {
 
 					if (hit.collider.CompareTag("Tile")) {
-						Debug.Log("Mass: " + selectedObject.mass + "kg "
-							+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K \n"
-							+ "Current Temperature: " + selectedObject.getTemperature(selectedObject.getCurrentHeat()) + "C "
-							+ "Unfreezing Temperature: " + selectedObject.getTemperature(selectedObject.heatThreshold_unfreeze) + "C");
+						//Debug.Log("Mass: " + selectedObject.mass + "kg "
+						//	+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K \n"
+						//	+ "Current Temperature: " + selectedObject.getTemperature(selectedObject.getCurrentHeat()) + "C "
+						//	+ "Unfreezing Temperature: " + selectedObject.getTemperature(selectedObject.heatThreshold_unfreeze) + "C");
+						tileInfo.text = "Mass: " + selectedObject.mass + "kg\n"
+							+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K\n"
+							+ "Current Temperature: " + selectedObject.getTemperature(selectedObject.getCurrentHeat()) + "C\n"
+							+ "Unfreezing Temperature: " + selectedObject.getTemperature(selectedObject.heatThreshold_unfreeze) + "C";
 					} else if (hit.collider.CompareTag("Source")) {
-						Debug.Log("Source Remaining Heat: " + selectedObject.getCurrentHeat());
+						//Debug.Log("Source Remaining Heat: " + selectedObject.getCurrentHeat());
+						tileInfo.text = "Source Remaining Heat: " + selectedObject.getCurrentHeat ();
 					} else if (hit.collider.CompareTag("Player")) {
-						Debug.Log("Player's Current Heat: " + selectedObject.getCurrentHeat());
+						//Debug.Log("Player's Current Heat: " + selectedObject.getCurrentHeat());
 					}
 				} else {
 					Debug.Log ("Invalid Object Selected");
@@ -72,6 +98,7 @@ public class GameController : MonoBehaviour {
 	void InitGame(int sourceCount) {
 		boardController.SetupGameArea(sourceCount);
 		playerInstance = boardController.getPlayer();
+		playerInstanceHeat = playerInstance.GetComponent<HeatController>();
 	}
 
 	private void incrementFrozenCount(GameObject gameObject) {
