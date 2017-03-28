@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour {
 
+	public GameObject snow;
 	public GameObject player;
+	public GameObject enemy;
 	public GameObject[] entities_Source;
 	public GameObject[] tiles_Wall;
 	public GameObject[] tiles_Floor;
@@ -14,6 +16,8 @@ public class BoardController : MonoBehaviour {
 	private int tile_Count;
 	private int board_Width = 20;
 	private int board_Height = 20;
+	//private int board_Width = 75;
+	//private int board_Height = 40;
 
 	private bool[,] spawnableArea;
 	private GameObject[,] gameBoard;
@@ -95,6 +99,17 @@ public class BoardController : MonoBehaviour {
 
 	}
 
+	public void SpawnEnemy() {
+		float player_x = playerController.transform.position.x;
+		float player_y = playerController.transform.position.y;
+
+		int spawn_x = (int) Random.Range (Mathf.Max(1, player_x - 10), Mathf.Min(player_x + 10, board_Width - 1));
+		int spawn_y = (int) Random.Range (Mathf.Max(1, player_y - 10), Mathf.Min(player_y + 10, board_Height - 1));
+
+		Vector3 spawnPosition = new Vector3 (spawn_x, spawn_y, 0);
+		Instantiate(enemy, spawnPosition, Quaternion.identity);
+	}
+
 	/**
 	 * Helper Functions
 	 **/
@@ -137,6 +152,16 @@ public class BoardController : MonoBehaviour {
 		SetupBoard();
 		SpawnPlayer();
 		SpawnEntities (sourceCount);
+		StartCoroutine (snowing());
+	}
+
+	IEnumerator snowing() {
+		while (true) {
+			Vector3 spawnPosition = new Vector3 (Random.Range(0, board_Width),
+				Random.Range(5, board_Height), 0);
+			Instantiate (snow, spawnPosition, Quaternion.identity);
+			yield return new WaitForSeconds (0.25f);
+		}
 	}
 
 	/**

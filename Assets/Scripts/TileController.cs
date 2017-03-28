@@ -11,12 +11,22 @@ public class TileController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		if (heatController.getIsFrozen()) {
-			// Attempt to unfreeze tile
-			HeatController sourceHeatController = other.gameObject.GetComponent<HeatController> ();
+		HeatController sourceHeatController = other.gameObject.GetComponent<HeatController> ();
 
+		if (heatController.getIsFrozen ()) {
+			// Attempt to unfreeze tile
 			if (sourceHeatController != null) {
-				heatController.Unfreeze(heatController, sourceHeatController);
+				if (other.gameObject.CompareTag ("Player")) {
+					heatController.Unfreeze (heatController, sourceHeatController);
+				}
+			} else {
+				Debug.LogWarning ("Unable to find 'HeatController' script on " + other.gameObject.name);
+			}
+		} else {
+			if (sourceHeatController != null) {
+				if (other.gameObject.CompareTag ("Enemy")) {
+					heatController.Unfreeze (sourceHeatController, heatController);
+				}
 			} else {
 				Debug.LogWarning ("Unable to find 'HeatController' script on " + other.gameObject.name);
 			}
