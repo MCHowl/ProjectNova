@@ -37,8 +37,35 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update() {
+		//Game Time Check
 		if (Time.time > gameEndTime) {
 			playerInstance.FreezePlayer();
+		}
+
+		//Mouse Over Information
+		if (Input.GetButtonDown("Fire1")) {
+			Vector2 mousePosition = new Vector2 (Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+
+			RaycastHit2D hit = Physics2D.Raycast (mousePosition, Vector2.zero, 0f);
+			if (hit) {
+				HeatController selectedObject = hit.transform.gameObject.GetComponent<HeatController>();
+
+				if (selectedObject != null) {
+
+					if (hit.collider.CompareTag("Tile")) {
+						Debug.Log("Mass: " + selectedObject.mass + "kg "
+							+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K \n"
+							+ "Current Temperature: " + selectedObject.getTemperature(selectedObject.getCurrentHeat()) + "C "
+							+ "Unfreezing Temperature: " + selectedObject.getTemperature(selectedObject.heatThreshold_unfreeze) + "C");
+					} else if (hit.collider.CompareTag("Source")) {
+						Debug.Log("Source Remaining Heat: " + selectedObject.getCurrentHeat());
+					} else if (hit.collider.CompareTag("Player")) {
+						Debug.Log("Player's Current Heat: " + selectedObject.getCurrentHeat());
+					}
+				} else {
+					Debug.Log ("Invalid Object Selected");
+				}
+			}
 		}
 	}
 
