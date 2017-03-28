@@ -13,8 +13,11 @@ public class GameController : MonoBehaviour {
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 2.0f;
+	private float timePerTile = 0.25f;
 	private float gameEndTime;
+
+	private float enemySpawnDelay;
+	private float enemySpawnTime;
 
 	private Text playerInfo;
 	private Text tileInfo;
@@ -35,6 +38,7 @@ public class GameController : MonoBehaviour {
 		timeInfo = (GameObject.Find("Time Text")).GetComponent<Text>();
 
 		InitGame(6);
+		//InitGame(58);
 
 	}
 
@@ -50,12 +54,21 @@ public class GameController : MonoBehaviour {
 		playerInfo.text = "";
 		timeInfo.text = "";
 		tileInfo.text = "";
+
+		enemySpawnDelay = gameEndTime / 5;
+		enemySpawnTime = enemySpawnDelay;
 	}
 
 	void Update() {
 		//Game Time Check
 		if (Time.time > gameEndTime) {
 			playerInstance.FreezePlayer();
+		}
+
+		//Spawn Enemy
+		if (Time.time > enemySpawnTime) {
+			boardController.SpawnEnemy();
+			enemySpawnTime += enemySpawnDelay;
 		}
 
 		//Update Player Heat & Time
