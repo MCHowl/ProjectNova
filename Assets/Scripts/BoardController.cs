@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour {
 
+	public GameObject snow;
 	public GameObject player;
 	public GameObject[] entities_Source;
 	public GameObject[] tiles_Wall;
@@ -137,6 +138,16 @@ public class BoardController : MonoBehaviour {
 		SetupBoard();
 		SpawnPlayer();
 		SpawnEntities (sourceCount);
+		StartCoroutine (snowing());
+	}
+
+	IEnumerator snowing() {
+		while (true) {
+			Vector3 spawnPosition = new Vector3 (Random.Range(0, board_Width),
+				Random.Range(5, board_Height), 0);
+			Instantiate (snow, spawnPosition, Quaternion.identity);
+			yield return new WaitForSeconds (0.25f);
+		}
 	}
 
 	/**
