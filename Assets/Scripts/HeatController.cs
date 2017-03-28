@@ -25,7 +25,7 @@ public class HeatController : MonoBehaviour {
 	void Start() {
 		spriteRenderer = GetComponent<SpriteRenderer>();
 
-		if (gameObject.CompareTag("Tile")) {
+		if (gameObject.CompareTag("Tile") || gameObject.CompareTag("Enemy")) {
 			currentHeat = heatThreshold_freeze;
 			maxHeat = heatThreshold_unfreeze;
 			setFrozen();
