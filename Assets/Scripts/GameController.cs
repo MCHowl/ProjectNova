@@ -13,11 +13,13 @@ public class GameController : MonoBehaviour {
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 0.25f;
+	private float timePerTile = 2f;
 	private float gameEndTime;
+	private int sourceBlockSpawnCount = 68; //Note: Total blocks spawned will be this number + 1
 
 	private float enemySpawnDelay;
 	private float enemySpawnTime;
+	private int enemySpawnCount = 10;
 
 	private Text playerInfo;
 	private Text tileInfo;
@@ -36,13 +38,11 @@ public class GameController : MonoBehaviour {
 		playerInfo = (GameObject.Find("Player Text")).GetComponent<Text>();
 		tileInfo = (GameObject.Find("Tile Text")).GetComponent<Text>();
 		timeInfo = (GameObject.Find("Time Text")).GetComponent<Text>();
-
-		InitGame(6);
-		//InitGame(58);
-
+		InitGame(sourceBlockSpawnCount);
 	}
 
 	void OnEnable() {
+		// Set listeners for freeze/unfreeze events
 		HeatController.ObjectFrozenEvent += incrementFrozenCount;
 		HeatController.ObjectUnfrozenEvent += decrementFrozenCount;
 	}
@@ -55,7 +55,8 @@ public class GameController : MonoBehaviour {
 		timeInfo.text = "";
 		tileInfo.text = "";
 
-		enemySpawnDelay = gameEndTime / 5;
+		//Set Enemy Spawn Frequency
+		enemySpawnDelay = gameEndTime / enemySpawnCount;
 		enemySpawnTime = enemySpawnDelay;
 	}
 
@@ -65,45 +66,47 @@ public class GameController : MonoBehaviour {
 			playerInstance.FreezePlayer();
 		}
 
+		//Update Player Heat & Time
+		int remainingTime = (int)(gameEndTime - Time.time);
+		playerInfo.text = "Remaining Heat: " + playerInstanceHeat.getCurrentHeat();
+		timeInfo.text = "Remaining Time: " + remainingTime + "s\n"
+						+ "Remaining Tiles: " +  remaining_Tiles + "/" + total_Tiles;
+
+		//Performance Checks
+		float percentTilesPassed = ((float)(total_Tiles - remaining_Tiles) / (float)total_Tiles) * 100;
+		float percentTimePassed = (Time.time / gameEndTime) * 100;
+
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
 			boardController.SpawnEnemy();
 			enemySpawnTime += enemySpawnDelay;
+
+			StartCoroutine(boardController.SnowStorm(100,0.25f));
 		}
 
-		//Update Player Heat & Time
-		int remainingTime = (int)(gameEndTime - Time.time);
-		timeInfo.text = "Remaining Time: " + remainingTime + "s";
-		playerInfo.text = "Remaining Heat: " + playerInstanceHeat.getCurrentHeat();
-
 		//Mouse Over Information
-		if (Input.GetButtonDown("Fire1")) {
-			Vector2 mousePosition = new Vector2 (Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+		Vector2 mousePosition = new Vector2 (Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
 
-			RaycastHit2D hit = Physics2D.Raycast (mousePosition, Vector2.zero, 0f);
-			if (hit) {
-				HeatController selectedObject = hit.transform.gameObject.GetComponent<HeatController>();
+		RaycastHit2D hit = Physics2D.Raycast (mousePosition, Vector2.zero, 0f);
+		if (hit) {
+			HeatController selectedObject = hit.transform.gameObject.GetComponent<HeatController>();
 
-				if (selectedObject != null) {
+			if (selectedObject != null) {
 
-					if (hit.collider.CompareTag("Tile")) {
-						//Debug.Log("Mass: " + selectedObject.mass + "kg "
-						//	+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K \n"
-						//	+ "Current Temperature: " + selectedObject.getTemperature(selectedObject.getCurrentHeat()) + "C "
-						//	+ "Unfreezing Temperature: " + selectedObject.getTemperature(selectedObject.heatThreshold_unfreeze) + "C");
-						tileInfo.text = "Mass: " + selectedObject.mass + "kg\n"
-							+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K\n"
-							+ "Current Temperature: " + selectedObject.getTemperature(selectedObject.getCurrentHeat()) + "C\n"
-							+ "Unfreezing Temperature: " + selectedObject.getTemperature(selectedObject.heatThreshold_unfreeze) + "C";
-					} else if (hit.collider.CompareTag("Source")) {
-						//Debug.Log("Source Remaining Heat: " + selectedObject.getCurrentHeat());
-						tileInfo.text = "Source Remaining Heat: " + selectedObject.getCurrentHeat ();
-					} else if (hit.collider.CompareTag("Player")) {
-						//Debug.Log("Player's Current Heat: " + selectedObject.getCurrentHeat());
-					}
-				} else {
-					Debug.Log ("Invalid Object Selected");
+				if (hit.collider.CompareTag ("Tile")) {
+					tileInfo.text = "Mass: " + selectedObject.mass + "kg\n"
+					+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K\n"
+					+ "Current Temperature: " + selectedObject.getTemperature (selectedObject.getCurrentHeat()) + "C\n"
+					+ "Unfreezing Temperature: " + selectedObject.getTemperature (selectedObject.heatThreshold_unfreeze) + "C";
+				} else if (hit.collider.CompareTag ("Source")) {
+					tileInfo.text = "Source Remaining Heat: " + selectedObject.getCurrentHeat();
+				} else if (hit.collider.CompareTag ("Enemy")) { 
+					tileInfo.text = "Heat Needed to Destroy: " + (selectedObject.heatThreshold_unfreeze - selectedObject.getCurrentHeat());
+				} else if (hit.collider.CompareTag ("Player")) {
+					tileInfo.text = "You notice your fabulous looking character sprite";
 				}
+			} else {
+				tileInfo.text = "If you notice this notice,\nyou will notice this notice\nis not worth notice.";
 			}
 		}
 	}
@@ -121,16 +124,12 @@ public class GameController : MonoBehaviour {
 			Debug.Log ("You Lose");
 			GameOver();
 		}
-
-		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 	}
 
 	private void decrementFrozenCount(GameObject gameObject) {
 		if (gameObject.CompareTag ("Tile")) {
 			remaining_Tiles -= 1;
 		} 
-
-		//Debug.Log ("Entities Remaining: " + remaining_Entities + "\nTiles Remaining: " + remaining_Tiles);
 
 		if (remaining_Tiles == 0) {
 			Debug.Log ("You Win");

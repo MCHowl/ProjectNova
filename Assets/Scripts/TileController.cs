@@ -10,11 +10,14 @@ public class TileController : MonoBehaviour {
 		heatController = GetComponent<HeatController>();	
 	}
 
+	/**
+	 * Attempt to transfer heat to the tile from the player if frozen,
+	 * otherwise attempt to transfer heat to the enemy.
+	 **/
 	void OnTriggerEnter2D(Collider2D other) {
 		HeatController sourceHeatController = other.gameObject.GetComponent<HeatController> ();
 
 		if (heatController.getIsFrozen ()) {
-			// Attempt to unfreeze tile
 			if (sourceHeatController != null) {
 				if (other.gameObject.CompareTag ("Player")) {
 					heatController.Unfreeze (heatController, sourceHeatController);

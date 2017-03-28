@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour {
 			return;
 		} else {
 			inCollisionWith = other.gameObject;
-			Debug.Log ("In collision with " + inCollisionWith.name);
+			//Debug.Log ("In collision with " + inCollisionWith.name);
 		}
 	}
 
