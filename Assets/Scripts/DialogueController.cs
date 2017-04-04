@@ -41,6 +41,12 @@ public class DialogueController : MonoBehaviour {
 		return;
 	}
 
+	private void Flush() {
+		tempList.Clear();
+		splitLine.Clear();
+		dialogueList.Clear();
+	}
+
 	private void ChangeDialogue() {
 		if (lineNo < dialogueList.Count) {
 			currentDialogue = (string)dialogueList [lineNo] [1];
@@ -65,5 +71,6 @@ public class DialogueController : MonoBehaviour {
 		dialogueText.text = "";
 		isDialogue = false;
 		Time.timeScale = 1.0f;
+		Flush();
 	}
 }

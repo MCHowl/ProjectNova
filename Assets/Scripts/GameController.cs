@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour {
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 2f;
+	private float timePerTile = 0.05f;
 	private float gameEndTime;
 
 	private float enemySpawnDelay;
@@ -37,6 +37,10 @@ public class GameController : MonoBehaviour {
 	private Text playerInfo;
 	private Text tileInfo;
 	private Text timeInfo;
+
+	bool showEnemyDialogue = true;
+	bool showStormDialogue = true;
+	bool showEquationDialogue = true;
 
 
 	void Awake() {
@@ -80,7 +84,8 @@ public class GameController : MonoBehaviour {
 		stormSpawnDelay = gameEndTime / stormSpawnCount;
 		stormSpawnTime = stormSpawnDelay;
 
-		dialogueController.StartDialogue("test");
+		dialogueController.StartDialogue("intro");
+		dialogueController.StartDialogue("equation");
 	}
 
 	void Update() {
@@ -103,10 +108,20 @@ public class GameController : MonoBehaviour {
 		if (Time.time > enemySpawnTime) {
 			boardController.SpawnEnemy(enemySpeed, enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
+
+			if (showEnemyDialogue) {
+				dialogueController.StartDialogue("enemy");
+				showEnemyDialogue = false;
+			}
 		}
 
 		//Start Storm
 		if (Time.time > stormSpawnTime) {
+			if (showStormDialogue) {
+				//dialogueController.StartDialogue("storm");
+				showStormDialogue = false;
+			}
+
 			StartCoroutine(boardController.SnowStorm(stormLength, stormIntensity));
 		}
 
