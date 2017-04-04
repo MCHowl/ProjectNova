@@ -15,15 +15,28 @@ public class GameController : MonoBehaviour {
 
 	private float timePerTile = 2f;
 	private float gameEndTime;
-	private int sourceBlockSpawnCount = 68; //Note: Total blocks spawned will be this number + 1
 
 	private float enemySpawnDelay;
 	private float enemySpawnTime;
-	private int enemySpawnCount = 10;
+	private int enemySpawnCount = 3;
+
+	private float enemySpeed = 0.5f;
+	private float enemyHealth = 10000000f;
+
+	private float stormSpawnDelay;
+	private float stormSpawnTime;
+	private int stormSpawnCount = 4;
+
+	private int stormLength = 100;
+	private float stormIntensity = 0.25f;
+
+	public GameObject selector;
+	private Transform selectorPosition;
 
 	private Text playerInfo;
 	private Text tileInfo;
 	private Text timeInfo;
+
 
 	void Awake() {
 		if (instance == null) {
@@ -38,7 +51,7 @@ public class GameController : MonoBehaviour {
 		playerInfo = (GameObject.Find("Player Text")).GetComponent<Text>();
 		tileInfo = (GameObject.Find("Tile Text")).GetComponent<Text>();
 		timeInfo = (GameObject.Find("Time Text")).GetComponent<Text>();
-		InitGame(sourceBlockSpawnCount);
+		InitGame();
 	}
 
 	void OnEnable() {
@@ -51,6 +64,8 @@ public class GameController : MonoBehaviour {
 		total_Tiles = boardController.getTileCount();
 		gameEndTime = total_Tiles * timePerTile;
 
+		selectorPosition = Instantiate(selector, Input.mousePosition, Quaternion.identity).transform;
+
 		playerInfo.text = "";
 		timeInfo.text = "";
 		tileInfo.text = "";
@@ -58,6 +73,10 @@ public class GameController : MonoBehaviour {
 		//Set Enemy Spawn Frequency
 		enemySpawnDelay = gameEndTime / enemySpawnCount;
 		enemySpawnTime = enemySpawnDelay;
+
+		//Set Storm Spawn Frequency
+		stormSpawnDelay = gameEndTime / stormSpawnCount;
+		stormSpawnTime = stormSpawnDelay;
 	}
 
 	void Update() {
@@ -78,10 +97,13 @@ public class GameController : MonoBehaviour {
 
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
-			boardController.SpawnEnemy();
+			boardController.SpawnEnemy(enemySpeed, enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
+		}
 
-			StartCoroutine(boardController.SnowStorm(100,0.25f));
+		//Start Storm
+		if (Time.time > stormSpawnTime) {
+			StartCoroutine(boardController.SnowStorm(stormLength, stormIntensity));
 		}
 
 		//Mouse Over Information
@@ -92,6 +114,7 @@ public class GameController : MonoBehaviour {
 			HeatController selectedObject = hit.transform.gameObject.GetComponent<HeatController>();
 
 			if (selectedObject != null) {
+				selectorPosition.position = hit.transform.position;
 
 				if (hit.collider.CompareTag ("Tile")) {
 					tileInfo.text = "Mass: " + selectedObject.mass + "kg\n"
@@ -105,14 +128,14 @@ public class GameController : MonoBehaviour {
 				} else if (hit.collider.CompareTag ("Player")) {
 					tileInfo.text = "You notice your fabulous looking character sprite";
 				}
-			} else {
+			}/* else {
 				tileInfo.text = "If you notice this notice,\nyou will notice this notice\nis not worth notice.";
-			}
+			}*/
 		}
 	}
 
-	void InitGame(int sourceCount) {
-		boardController.SetupGameArea(sourceCount);
+	void InitGame() {
+		boardController.SetupGameArea();
 		playerInstance = boardController.getPlayer();
 		playerInstanceHeat = playerInstance.GetComponent<HeatController>();
 	}
