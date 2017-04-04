@@ -99,7 +99,7 @@ public class BoardController : MonoBehaviour {
 
 	}
 
-	public void SpawnEnemy() {
+	public void SpawnEnemy(float health, float moveDelay) {
 		float player_x = playerController.transform.position.x;
 		float player_y = playerController.transform.position.y;
 
@@ -107,7 +107,13 @@ public class BoardController : MonoBehaviour {
 		int spawn_y = (int) Random.Range (Mathf.Max(1, player_y - enemySpawnRange), Mathf.Min(player_y + enemySpawnRange, board_Height - 1));
 
 		Vector3 spawnPosition = new Vector3 (spawn_x, spawn_y, 0);
-		Instantiate(enemy, spawnPosition, Quaternion.identity);
+		GameObject newEnemy = Instantiate(enemy, spawnPosition, Quaternion.identity);
+
+		HeatController enemyHeatController = newEnemy.GetComponent<HeatController>();
+		EnemyController enemyController = newEnemy.GetComponent<EnemyController>();
+
+		enemyHeatController.setEnemyHealth(health);
+		enemyController.setMoveDelay(moveDelay);
 	}
 
 	/**

@@ -19,7 +19,17 @@ public class GameController : MonoBehaviour {
 
 	private float enemySpawnDelay;
 	private float enemySpawnTime;
-	private int enemySpawnCount = 10;
+	private int enemySpawnCount = 3;
+
+	private float enemySpeed = 0.5f;
+	private float enemyHealth = 10000000f;
+
+	private float stormSpawnDelay;
+	private float stormSpawnTime;
+	private int stormSpawnCount = 4;
+
+	private int stormLength = 100;
+	private float stormIntensity = 0.25f;
 
 	private Text playerInfo;
 	private Text tileInfo;
@@ -58,6 +68,10 @@ public class GameController : MonoBehaviour {
 		//Set Enemy Spawn Frequency
 		enemySpawnDelay = gameEndTime / enemySpawnCount;
 		enemySpawnTime = enemySpawnDelay;
+
+		//Set Storm Spawn Frequency
+		stormSpawnDelay = gameEndTime / stormSpawnCount;
+		stormSpawnTime = stormSpawnDelay;
 	}
 
 	void Update() {
@@ -78,10 +92,13 @@ public class GameController : MonoBehaviour {
 
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
-			boardController.SpawnEnemy();
+			boardController.SpawnEnemy(enemySpeed, enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
+		}
 
-			StartCoroutine(boardController.SnowStorm(100,0.25f));
+		//Start Storm
+		if (Time.time > stormSpawnTime) {
+			StartCoroutine(boardController.SnowStorm(stormLength, stormIntensity));
 		}
 
 		//Mouse Over Information
