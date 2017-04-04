@@ -31,9 +31,13 @@ public class GameController : MonoBehaviour {
 	private int stormLength = 100;
 	private float stormIntensity = 0.25f;
 
+	public GameObject selector;
+	private Transform selectorPosition;
+
 	private Text playerInfo;
 	private Text tileInfo;
 	private Text timeInfo;
+
 
 	void Awake() {
 		if (instance == null) {
@@ -60,6 +64,8 @@ public class GameController : MonoBehaviour {
 	void Start() {
 		total_Tiles = boardController.getTileCount();
 		gameEndTime = total_Tiles * timePerTile;
+
+		selectorPosition = Instantiate(selector, Input.mousePosition, Quaternion.identity).transform;
 
 		playerInfo.text = "";
 		timeInfo.text = "";
@@ -109,6 +115,7 @@ public class GameController : MonoBehaviour {
 			HeatController selectedObject = hit.transform.gameObject.GetComponent<HeatController>();
 
 			if (selectedObject != null) {
+				selectorPosition.position = hit.transform.position;
 
 				if (hit.collider.CompareTag ("Tile")) {
 					tileInfo.text = "Mass: " + selectedObject.mass + "kg\n"
@@ -122,9 +129,9 @@ public class GameController : MonoBehaviour {
 				} else if (hit.collider.CompareTag ("Player")) {
 					tileInfo.text = "You notice your fabulous looking character sprite";
 				}
-			} else {
+			}/* else {
 				tileInfo.text = "If you notice this notice,\nyou will notice this notice\nis not worth notice.";
-			}
+			}*/
 		}
 	}
 
