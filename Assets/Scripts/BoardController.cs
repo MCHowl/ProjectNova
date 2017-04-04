@@ -28,6 +28,22 @@ public class BoardController : MonoBehaviour {
 	private Transform holder_GameBoarder;
 	private Transform holder_Entities_Source;
 
+	private int[] pattern1 = {1, 0, 1, 1, 3, 2, 1,
+							  2, 0, 2, 2, 0, 2, 2,
+							  2, 0, 3, 0, 0, 3, 1,
+							  3, 0, 0,-1, 0, 3, 0,
+							  2, 3, 3, 0, 3, 2, 1,
+							  3, 0, 2, 1, 3, 3, 1,
+							  1, 1, 3, 2, 2, 1, 1};
+
+	private int[] pattern2 = {3, 1, 1, 2, 1, 3, 2,
+							  2, 0, 3, 2, 3, 1, 3,
+							  1, 3, 0, 0, 1, 0, 2,
+							  1, 3, 0,-1, 0, 0, 3,
+							  2, 2, 0, 0, 1, 0, 0,
+							  1, 2, 3, 3, 0, 3, 2,
+							  2, 1, 1, 2, 3, 1, 2};
+
 	private void InstantiateHolders() {
 		holder_GameBoard = new GameObject ("Board").transform;
 		holder_GameBoarder = new GameObject ("Walls").transform;
@@ -82,6 +98,7 @@ public class BoardController : MonoBehaviour {
 
 		spawnableArea[(int) spawnPosition.x, (int) spawnPosition.y] = false;
 		Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
+		CreateTilePattern((int) spawnPosition.x, (int) spawnPosition.y);
 
 		//Spawn 4 corner sources
 		int x_offset = board_Width / 4;
@@ -96,6 +113,30 @@ public class BoardController : MonoBehaviour {
 
 				spawnableArea[(int) spawnPosition.x, (int) spawnPosition.y] = false;
 				Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
+				CreateTilePattern((int) spawnPosition.x, (int) spawnPosition.y);
+			}
+		}
+	}
+
+	private void CreateTilePattern(int x, int y) {
+		int[] pattern = pattern1;
+		if (Random.Range (0, 1) > 0.5) {
+			pattern = pattern2;
+		}
+
+		int start_x = x - 3;
+		int start_y = y - 3;
+
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				int position = pattern [(i * 7) + j];
+
+				if (position >= 0) {
+					Destroy (gameBoard [start_x + i, start_y + j]);
+
+					Vector3 newTilePostition = new Vector3 (start_x + i, start_y + j, 0.0f);
+					gameBoard [i, j] = InstantiateObject (tiles_Floor[position], newTilePostition, holder_GameBoard);
+				}
 			}
 		}
 	}
@@ -141,31 +182,6 @@ public class BoardController : MonoBehaviour {
 		newInstance.transform.SetParent(parent);
 
 		return newInstance;
-	}
-
-	private Vector3 getRandomVaildBoardPosition() {
-		bool isSearching = true;
-		int count = 0;
-		int x, y;
-
-		while (isSearching) {
-			x = Random.Range (0, board_Width);
-			y = Random.Range (0, board_Height);
-
-			if (spawnableArea[x, y]) {
-				spawnableArea[x, y] = false;
-				return new Vector3 (x, y, 0);
-			} else {
-				count++;
-
-				if (count >= Mathf.Sqrt (board_Width * board_Height)) {
-					Debug.LogError ("Unable to find valid spawn position");
-					return new Vector3 (-1, -1, -1);
-				}
-			}
-		}
-		Debug.LogError ("You are not supposed to reach this line of code");
-		return new Vector3 (-1, -1, -1);
 	}
 
 	public void SetupGameArea() {
