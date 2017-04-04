@@ -25,7 +25,8 @@ public class HeatController : MonoBehaviour {
 	void Start() {
 		spriteRenderer = GetComponent<SpriteRenderer>();
 
-		if (gameObject.CompareTag("Tile")) {
+		// Set the starting heat of all objects
+		if (gameObject.CompareTag("Tile") || gameObject.CompareTag("Enemy")) {
 			currentHeat = heatThreshold_freeze;
 			maxHeat = heatThreshold_unfreeze;
 			setFrozen();
@@ -39,14 +40,18 @@ public class HeatController : MonoBehaviour {
 	}
 
 	void LateUpdate() {
+		// Check if the object is in the correct state
 		if (currentHeat <= heatThreshold_freeze && !getIsFrozen()) {
 			setFrozen();
-
 		} else if (currentHeat >= heatThreshold_unfreeze && getIsFrozen()) {
 			setUnfrozen();
 		}
 	}
 
+	/**
+	 * Attempt to transfer heat from the source HeatController to the destination HeatController
+	 * The heat transfer will not exceed the maximum & minimum heat level of the respective HeatControllers
+	 **/
 	private void transferHeat(float transferRequest, HeatController source, HeatController destination) {
 		float heatTransferred;
 
@@ -59,6 +64,11 @@ public class HeatController : MonoBehaviour {
 		source.currentHeat = Mathf.Max(minHeat, source.currentHeat - heatTransferred);
 		destination.currentHeat = Mathf.Min(maxHeat, destination.currentHeat + heatTransferred);
 	}
+
+	/**
+	 * Attempt to bring the target to its unfreeze threshold heat level
+	 * using heat taken from the source HeatController.
+	 **/
 
 	public void Unfreeze(HeatController target, HeatController heatSource) {
 		float heatRequest = target.heatThreshold_unfreeze - target.currentHeat;
