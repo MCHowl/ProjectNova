@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour {
 
 	public static GameController instance = null;
 	private BoardController boardController;
+	private DialogueController dialogueController;
 	private PlayerController playerInstance;
 	private HeatController playerInstanceHeat;
 
@@ -47,6 +48,7 @@ public class GameController : MonoBehaviour {
 
 		DontDestroyOnLoad(this.gameObject);
 		boardController = GetComponent<BoardController>();
+		dialogueController = GetComponent<DialogueController>();
 
 		playerInfo = (GameObject.Find("Player Text")).GetComponent<Text>();
 		tileInfo = (GameObject.Find("Tile Text")).GetComponent<Text>();
@@ -77,6 +79,8 @@ public class GameController : MonoBehaviour {
 		//Set Storm Spawn Frequency
 		stormSpawnDelay = gameEndTime / stormSpawnCount;
 		stormSpawnTime = stormSpawnDelay;
+
+		dialogueController.StartDialogue("test");
 	}
 
 	void Update() {
