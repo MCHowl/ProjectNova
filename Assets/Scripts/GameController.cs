@@ -15,7 +15,6 @@ public class GameController : MonoBehaviour {
 
 	private float timePerTile = 2f;
 	private float gameEndTime;
-	private int sourceBlockSpawnCount = 68; //Note: Total blocks spawned will be this number + 1
 
 	private float enemySpawnDelay;
 	private float enemySpawnTime;
@@ -52,7 +51,7 @@ public class GameController : MonoBehaviour {
 		playerInfo = (GameObject.Find("Player Text")).GetComponent<Text>();
 		tileInfo = (GameObject.Find("Tile Text")).GetComponent<Text>();
 		timeInfo = (GameObject.Find("Time Text")).GetComponent<Text>();
-		InitGame(sourceBlockSpawnCount);
+		InitGame();
 	}
 
 	void OnEnable() {
@@ -135,8 +134,8 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	void InitGame(int sourceCount) {
-		boardController.SetupGameArea(sourceCount);
+	void InitGame() {
+		boardController.SetupGameArea();
 		playerInstance = boardController.getPlayer();
 		playerInstanceHeat = playerInstance.GetComponent<HeatController>();
 	}

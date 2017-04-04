@@ -7,7 +7,7 @@ public class BoardController : MonoBehaviour {
 	public GameObject snow;
 	public GameObject player;
 	public GameObject enemy;
-	public GameObject[] entities_Source;
+	public GameObject heatSource;
 	public GameObject[] tiles_Wall;
 	public GameObject[] tiles_Floor;
 
@@ -16,7 +16,9 @@ public class BoardController : MonoBehaviour {
 	private int tile_Count;
 	private int board_Width = 75;
 	private int board_Height = 40;
+	private int source_Count = 5;
 
+	private int sourceSpawnRange = 5;
 	private int enemySpawnRange = 10;
 
 	private bool[,] spawnableArea;
@@ -68,35 +70,50 @@ public class BoardController : MonoBehaviour {
 		}
 	}
 
-	private void SpawnEntities(int sourceCount) {
-		for (int i = 0; i < sourceCount; i++) {
-			Vector3 spawnPosition = getRandomVaildBoardPosition();
-			InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], spawnPosition, holder_Entities_Source);
-			Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
+	/**
+	 * Spawn 5 source tiles spread evenly across the map
+	 **/
+	private void SpawnSources() {
+		//Spawn middle source
+		int x_pos = (int) Random.Range(board_Width/2 - sourceSpawnRange, board_Width/2 + sourceSpawnRange);
+		int y_pos = (int) Random.Range(board_Height/2 - sourceSpawnRange, board_Height/2 + sourceSpawnRange);
+		Vector3 spawnPosition = new Vector3(x_pos, y_pos, 0);
+		InstantiateObject(heatSource, spawnPosition, holder_Entities_Source);
+
+		spawnableArea[(int) spawnPosition.x, (int) spawnPosition.y] = false;
+		Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
+
+		//Spawn 4 corner sources
+		int x_offset = board_Width / 4;
+		int y_offset = board_Height / 4;
+
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 2; j++) {
+				x_pos = (int) Random.Range(x_offset + (i * board_Width/2) - sourceSpawnRange, x_offset + (i * board_Width/2) + sourceSpawnRange);
+				y_pos = (int) Random.Range(y_offset + (j * board_Height/2) - sourceSpawnRange, y_offset + (j * board_Height/2) + sourceSpawnRange);
+				spawnPosition = new Vector3(x_pos, y_pos, 0);
+				InstantiateObject(heatSource, spawnPosition, holder_Entities_Source);
+
+				spawnableArea[(int) spawnPosition.x, (int) spawnPosition.y] = false;
+				Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
+			}
 		}
 	}
 
 	private void SpawnPlayer() {
-		//Choose a random point for the player to spawn
-		Vector3 playerSpawn = getRandomVaildBoardPosition();
-		GameObject playerInstance = Instantiate (player, playerSpawn, Quaternion.identity);
-		playerController = playerInstance.GetComponent<PlayerController>();
+		Transform startSource = holder_Entities_Source.GetChild(Random.Range (0, holder_Entities_Source.childCount));
 
-		//Spawn a source next to the player
-		float spawn_x;
-		if (playerSpawn.x <= 0) {
-			spawn_x = playerSpawn.x + 1;
+		float playerSpawn_x;
+
+		if (startSource.position.x <= 1) {
+			playerSpawn_x = startSource.position.x + 1;
 		} else {
-			spawn_x = playerSpawn.x - 1;
+			playerSpawn_x = startSource.position.x + 1;
 		}
 
-		Vector3 sourceSpawn = new Vector3(spawn_x, playerSpawn.y, playerSpawn.z);
-		InstantiateObject(entities_Source [Random.Range(0, entities_Source.Length)], sourceSpawn, holder_Entities_Source);
-
-		//Remove Tile from spawnableArea
-		spawnableArea[(int)spawn_x, (int)playerSpawn.y] = false;
-		Destroy(gameBoard [(int)spawn_x, (int)playerSpawn.y]);
-
+		Vector3 playerSpawn = new Vector3 (playerSpawn_x, startSource.position.y, 0f);
+		GameObject playerInstance = Instantiate (player, playerSpawn, Quaternion.identity);
+		playerController = playerInstance.GetComponent<PlayerController>();
 	}
 
 	public void SpawnEnemy(float health, float moveDelay) {
@@ -151,13 +168,13 @@ public class BoardController : MonoBehaviour {
 		return new Vector3 (-1, -1, -1);
 	}
 
-	public void SetupGameArea(int sourceCount) {
-		tile_Count = board_Width * board_Height - sourceCount - 1;
+	public void SetupGameArea() {
+		tile_Count = board_Width * board_Height - source_Count;
 
 		InstantiateHolders();
 		SetupBoard();
+		SpawnSources();
 		SpawnPlayer();
-		SpawnEntities(sourceCount);
 	}
 
 	public IEnumerator SnowStorm(int count, float frequency) {
