@@ -80,7 +80,7 @@ public class HeatController : MonoBehaviour {
 	 **/
 
 	public void setEnemyHealth(float health) {
-		heatThreshold_freeze = heatThreshold_unfreeze + health;
+		heatThreshold_unfreeze = heatThreshold_freeze + health;
 	}
 
 	public float getCurrentHeat() {

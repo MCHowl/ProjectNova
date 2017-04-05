@@ -7,28 +7,28 @@ public class GameController : MonoBehaviour {
 
 	public static GameController instance = null;
 	private BoardController boardController;
+	private DialogueController dialogueController;
 	private PlayerController playerInstance;
 	private HeatController playerInstanceHeat;
 
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 2f;
+	private float timePerTile = 0.05f;
 	private float gameEndTime;
 
 	private float enemySpawnDelay;
 	private float enemySpawnTime;
 	private int enemySpawnCount = 3;
 
-	private float enemySpeed = 0.5f;
-	private float enemyHealth = 10000000f;
+	private float enemyHealth = 25000f;
 
 	private float stormSpawnDelay;
 	private float stormSpawnTime;
 	private int stormSpawnCount = 4;
 
-	private int stormLength = 100;
-	private float stormIntensity = 0.25f;
+	private int stormLength = 400;
+	private float stormIntensity = 0.05f;
 
 	public GameObject selector;
 	private Transform selectorPosition;
@@ -36,6 +36,10 @@ public class GameController : MonoBehaviour {
 	private Text playerInfo;
 	private Text tileInfo;
 	private Text timeInfo;
+
+	bool showEnemyDialogue = true;
+	bool showStormDialogue = true;
+	bool showEquationDialogue = true;
 
 
 	void Awake() {
@@ -47,6 +51,7 @@ public class GameController : MonoBehaviour {
 
 		DontDestroyOnLoad(this.gameObject);
 		boardController = GetComponent<BoardController>();
+		dialogueController = GetComponent<DialogueController>();
 
 		playerInfo = (GameObject.Find("Player Text")).GetComponent<Text>();
 		tileInfo = (GameObject.Find("Tile Text")).GetComponent<Text>();
@@ -77,6 +82,9 @@ public class GameController : MonoBehaviour {
 		//Set Storm Spawn Frequency
 		stormSpawnDelay = gameEndTime / stormSpawnCount;
 		stormSpawnTime = stormSpawnDelay;
+
+		dialogueController.StartDialogue("intro");
+		dialogueController.StartDialogue("equation");
 	}
 
 	void Update() {
@@ -97,13 +105,24 @@ public class GameController : MonoBehaviour {
 
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
-			boardController.SpawnEnemy(enemySpeed, enemyHealth);
+			boardController.SpawnEnemy(enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
+
+			if (showEnemyDialogue) {
+				dialogueController.StartDialogue("enemy");
+				showEnemyDialogue = false;
+			}
 		}
 
 		//Start Storm
 		if (Time.time > stormSpawnTime) {
+			if (showStormDialogue) {
+				dialogueController.StartDialogue("storm");
+				showStormDialogue = false;
+			}
+
 			StartCoroutine(boardController.SnowStorm(stormLength, stormIntensity));
+			stormSpawnTime += stormSpawnDelay;
 		}
 
 		//Mouse Over Information
