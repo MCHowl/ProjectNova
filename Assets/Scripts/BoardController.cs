@@ -168,8 +168,6 @@ public class BoardController : MonoBehaviour {
 		GameObject newEnemy = Instantiate(enemy, spawnPosition, Quaternion.identity);
 
 		HeatController enemyHeatController = newEnemy.GetComponent<HeatController>();
-		EnemyController enemyController = newEnemy.GetComponent<EnemyController>();
-
 		enemyHeatController.setEnemyHealth(health);
 	}
 

@@ -17,6 +17,9 @@ public class GameController : MonoBehaviour {
 	private float timePerTile = 0.05f;
 	private float gameEndTime;
 
+	private float playerWarningDelay = 30f;
+	private float nextPlayerWarning;
+
 	private float enemySpawnDelay;
 	private float enemySpawnTime;
 	private int enemySpawnCount = 3;
@@ -39,8 +42,6 @@ public class GameController : MonoBehaviour {
 
 	bool showEnemyDialogue = true;
 	bool showStormDialogue = true;
-	bool showEquationDialogue = true;
-
 
 	void Awake() {
 		if (instance == null) {
@@ -60,9 +61,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		// Set listeners for freeze/unfreeze events
+		// Set listeners for events
 		HeatController.ObjectFrozenEvent += incrementFrozenCount;
 		HeatController.ObjectUnfrozenEvent += decrementFrozenCount;
+		PlayerController.PlayerWarningEvent += TriggerPlayerWarning;
 	}
 
 	void Start() {
@@ -82,6 +84,8 @@ public class GameController : MonoBehaviour {
 		//Set Storm Spawn Frequency
 		stormSpawnDelay = gameEndTime / stormSpawnCount;
 		stormSpawnTime = stormSpawnDelay;
+
+		nextPlayerWarning = 0;
 
 		dialogueController.StartDialogue("intro");
 		dialogueController.StartDialogue("equation");
@@ -163,7 +167,7 @@ public class GameController : MonoBehaviour {
 		if (gameObject.CompareTag("Tile")) {
 			remaining_Tiles += 1;
 		} else if (gameObject.CompareTag ("Player")) {
-			Debug.Log ("You Lose");
+			dialogueController.StartDialogue("gameOver");
 			GameOver();
 		}
 	}
@@ -174,12 +178,19 @@ public class GameController : MonoBehaviour {
 		} 
 
 		if (remaining_Tiles == 0) {
-			Debug.Log ("You Win");
+			dialogueController.StartDialogue("win");
 			GameOver();
 		}
 	}
 
-	private void GameOver(){
+	private void TriggerPlayerWarning() {
+		if (Time.time > nextPlayerWarning) {
+			nextPlayerWarning = Time.time + playerWarningDelay;
+			dialogueController.StartDialogue ("heatWarning");
+		}
+	}
+
+	private void GameOver() {
 		Debug.Log("Game Over");
 	}
 }

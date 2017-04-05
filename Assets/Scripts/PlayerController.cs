@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+	public delegate void PlayerWarning();
+	public static event PlayerWarning PlayerWarningEvent;
+
 	public LayerMask blockingLayer;
 
 	private Rigidbody2D rb2d;
@@ -31,6 +34,11 @@ public class PlayerController : MonoBehaviour {
 
 	void Update() {
 		//Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
+		if (heatController.getCurrentHeat() * 5 <= heatController.heatThreshold_unfreeze) {
+			//Debug.Log ("Trigger warning");
+			PlayerWarningEvent();
+		}
+
 
 		if (inCollisionWith != null) {
 			HeatController targetHeatController = inCollisionWith.GetComponent<HeatController>();
@@ -82,8 +90,6 @@ public class PlayerController : MonoBehaviour {
 			Vector2 start = new Vector2 (Mathf.Round(transform.position.x * 10) / 10, Mathf.Round(transform.position.y * 10) / 10);
 			Vector2 end = start + movement;
 			Vector2 collisionEnd = start + collisionCheck;
-
-			//Debug.Log (start.x + ", " + start.y + "\n" + collisionEnd.x + ", " + collisionEnd.y);
 
 			boxCollider.enabled = false;
 			RaycastHit2D hit = Physics2D.Linecast (start, collisionEnd, blockingLayer);
