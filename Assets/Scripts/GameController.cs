@@ -21,15 +21,14 @@ public class GameController : MonoBehaviour {
 	private float enemySpawnTime;
 	private int enemySpawnCount = 3;
 
-	private float enemySpeed = 0.5f;
-	private float enemyHealth = 10000000f;
+	private float enemyHealth = 25000f;
 
 	private float stormSpawnDelay;
 	private float stormSpawnTime;
 	private int stormSpawnCount = 4;
 
-	private int stormLength = 100;
-	private float stormIntensity = 0.25f;
+	private int stormLength = 400;
+	private float stormIntensity = 0.05f;
 
 	public GameObject selector;
 	private Transform selectorPosition;
@@ -106,7 +105,7 @@ public class GameController : MonoBehaviour {
 
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
-			boardController.SpawnEnemy(enemySpeed, enemyHealth);
+			boardController.SpawnEnemy(enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
 
 			if (showEnemyDialogue) {
@@ -118,11 +117,12 @@ public class GameController : MonoBehaviour {
 		//Start Storm
 		if (Time.time > stormSpawnTime) {
 			if (showStormDialogue) {
-				//dialogueController.StartDialogue("storm");
+				dialogueController.StartDialogue("storm");
 				showStormDialogue = false;
 			}
 
 			StartCoroutine(boardController.SnowStorm(stormLength, stormIntensity));
+			stormSpawnTime += stormSpawnDelay;
 		}
 
 		//Mouse Over Information

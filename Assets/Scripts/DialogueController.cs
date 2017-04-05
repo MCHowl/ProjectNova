@@ -24,8 +24,13 @@ public class DialogueController : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetButtonDown("Fire1") && isDialogue) {
-			ChangeDialogue();
+		if (isDialogue) {
+			if (Input.GetButtonDown("Fire1") || Input.GetKeyDown(KeyCode.Space)) {
+				ChangeDialogue();
+			} else if (Input.GetKeyDown(KeyCode.Escape)) {
+				EndDialogue();
+			}
+		
 		}
 	}
 	
