@@ -7,9 +7,11 @@ using UnityEngine.UI;
 
 public class DialogueController : MonoBehaviour {
 
+	public Sprite[] characterPortraits;
+	private Image portraitHolder;
 	private Text dialogueText;
 
-	public List<List<string>> dialogueList = new List<List<string>>();
+	private List<List<string>> dialogueList = new List<List<string>>();
 	private List<string> tempList = new List<string>();
 	private List<string> splitLine = new List<string> ();
 
@@ -21,6 +23,9 @@ public class DialogueController : MonoBehaviour {
 	void Awake() {
 		dialogueText = (GameObject.Find("Dialogue")).GetComponent<Text>();
 		dialogueText.text = "";
+
+		portraitHolder = (GameObject.Find("Image")).GetComponent<Image>();
+		portraitHolder.gameObject.SetActive(false);
 	}
 
 	void Update () {
@@ -58,6 +63,7 @@ public class DialogueController : MonoBehaviour {
 			currentCharID = System.Int32.Parse ((string)dialogueList [lineNo] [0]);
 
 			dialogueText.text = currentDialogue;
+			portraitHolder.overrideSprite = characterPortraits [currentCharID];
 			lineNo++;
 		} else {
 			EndDialogue();
@@ -69,6 +75,7 @@ public class DialogueController : MonoBehaviour {
 		isDialogue = true;
 		Time.timeScale = 0.0f;
 		lineNo = 0;
+		portraitHolder.gameObject.SetActive(true);
 		ChangeDialogue();
 	}
 
@@ -76,6 +83,7 @@ public class DialogueController : MonoBehaviour {
 		dialogueText.text = "";
 		isDialogue = false;
 		Time.timeScale = 1.0f;
+		portraitHolder.gameObject.SetActive(false);
 		Flush();
 	}
 }
