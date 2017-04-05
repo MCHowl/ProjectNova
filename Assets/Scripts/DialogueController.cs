@@ -9,6 +9,7 @@ public class DialogueController : MonoBehaviour {
 
 	public Sprite[] characterPortraits;
 	private Image portraitHolder;
+	private Image dialogueFrame;
 	private Text dialogueText;
 
 	private List<List<string>> dialogueList = new List<List<string>>();
@@ -26,6 +27,9 @@ public class DialogueController : MonoBehaviour {
 
 		portraitHolder = (GameObject.Find("Image")).GetComponent<Image>();
 		portraitHolder.gameObject.SetActive(false);
+
+		dialogueFrame = (GameObject.Find("Frame")).GetComponent<Image>();
+		dialogueFrame.gameObject.SetActive(false);
 	}
 
 	void Update () {
@@ -76,6 +80,7 @@ public class DialogueController : MonoBehaviour {
 		Time.timeScale = 0.0f;
 		lineNo = 0;
 		portraitHolder.gameObject.SetActive(true);
+		dialogueFrame.gameObject.SetActive (true);
 		ChangeDialogue();
 	}
 
@@ -84,6 +89,7 @@ public class DialogueController : MonoBehaviour {
 		isDialogue = false;
 		Time.timeScale = 1.0f;
 		portraitHolder.gameObject.SetActive(false);
+		dialogueFrame.gameObject.SetActive(false);
 		Flush();
 	}
 }
