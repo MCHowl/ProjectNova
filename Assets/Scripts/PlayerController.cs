@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
 
 	public LayerMask blockingLayer;
 
+	private Animator animator;
 	private Rigidbody2D rb2d;
 	private BoxCollider2D boxCollider;
 	private HeatController heatController;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour {
 	private bool isMove = true;
 
 	void Start() {
+		animator = GetComponent<Animator>();
 		rb2d = GetComponent<Rigidbody2D>();
 		boxCollider = GetComponent<BoxCollider2D>();
 		heatController = GetComponent<HeatController>();
@@ -80,7 +82,18 @@ public class PlayerController : MonoBehaviour {
 	public void AttemptMove(float moveHorizontal, float moveVertical) {
 		if (!heatController.getIsFrozen () && isMove) {
 			if (moveHorizontal != 0) {
+				if (moveHorizontal > 0) {
+					animator.SetTrigger ("WalkLeft");
+				} else {
+					animator.SetTrigger ("WalkRight");
+				}
 				moveVertical = 0;
+			} else {
+				if (moveVertical > 0) {
+					animator.SetTrigger ("WalkUp");
+				} else {
+					animator.SetTrigger ("WalkDown");
+				}
 			}
 
 			Vector2 movement = new Vector2 (moveHorizontal * moveDistance, moveVertical * moveDistance);
