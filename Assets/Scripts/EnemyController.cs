@@ -84,11 +84,4 @@ public class EnemyController : MonoBehaviour {
 			yield return null;
 		}
 	}
-
-	/**
-	 * Getters and Setters
-	 **/
-	public void setMoveDelay(float newDelay) {
-		moveDelay = newDelay;
-	}
 }

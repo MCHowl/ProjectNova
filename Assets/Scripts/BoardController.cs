@@ -19,7 +19,7 @@ public class BoardController : MonoBehaviour {
 	private int source_Count = 5;
 
 	private int sourceSpawnRange = 5;
-	private int enemySpawnRange = 10;
+	private int enemySpawnRange = 5;
 
 	private bool[,] spawnableArea;
 	private GameObject[,] gameBoard;
@@ -157,7 +157,7 @@ public class BoardController : MonoBehaviour {
 		playerController = playerInstance.GetComponent<PlayerController>();
 	}
 
-	public void SpawnEnemy(float health, float moveDelay) {
+	public void SpawnEnemy(float health) {
 		float player_x = playerController.transform.position.x;
 		float player_y = playerController.transform.position.y;
 
@@ -171,7 +171,6 @@ public class BoardController : MonoBehaviour {
 		EnemyController enemyController = newEnemy.GetComponent<EnemyController>();
 
 		enemyHeatController.setEnemyHealth(health);
-		enemyController.setMoveDelay(moveDelay);
 	}
 
 	/**
