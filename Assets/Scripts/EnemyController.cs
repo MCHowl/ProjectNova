@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour {
 	private HeatController heatController;
 	private BoxCollider2D boxCollider;
 	private Rigidbody2D rb2d;
+	private Animator animator;
 
 	private Transform target;
 
@@ -20,6 +21,8 @@ public class EnemyController : MonoBehaviour {
 		heatController = GetComponent<HeatController>();
 		boxCollider = GetComponent<BoxCollider2D>();
 		rb2d = GetComponent<Rigidbody2D>();
+		animator = GetComponent<Animator>();
+
 
 		target = GameObject.FindGameObjectWithTag ("Player").transform;
 
@@ -44,14 +47,18 @@ public class EnemyController : MonoBehaviour {
 			if (Mathf.Abs (target.position.x - transform.position.x) < float.Epsilon) {
 				if (target.position.y > transform.position.y) {
 					yDir = 1;
+					animator.SetTrigger("WalkUp");
 				} else {
 					yDir = -1;
+					animator.SetTrigger("WalkDown");
 				}
 			} else {
 				if (target.position.x > transform.position.x) {
 					xDir = 1;
+					animator.SetTrigger("WalkRight");
 				} else {
 					xDir = -1;
+					animator.SetTrigger("WalkLeft");
 				}
 			}
 
