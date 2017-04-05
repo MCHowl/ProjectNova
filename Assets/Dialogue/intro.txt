@@ -14,22 +14,22 @@
 1|Yes.
 1|Do you require verbal consent to proceed.
 0|Well, you're not obliged-
-1|Feel free to read off the machines you've put in me.
+4|Feel free to read off the machines you've put in me.
 0|Your compliance is greatly appreciated.
 0|[Downloading Data]
 0|[Data Acquired]
-0|Hmm…
+0|Hmmâ€¦
 1|That sounds foreboding.
 0|I just hmm-ed!
 1|It was a foreboding 'hmm'.
 0|What- Never mind. It appears that Sector 328, hereafter codenamed Interrium, shows signs of supporting lifeform.
-1|Lifeform.
+4|Lifeform.
 0|Yes.
-1|Was that a joke.
+4|Was that a joke.
 0|As such, you need to make defrosting the terrain your foremost priority.
-1|And staying alive is only secondary, of course.
+4|And staying alive is only secondary, of course.
 0|Do note that unexpected termination would be terribly inconvenient. Sending a new agent to Interrium would be far too costly in so short a period of time.
-1|I wouldn't want my death to be an inconvenience.
+4|I wouldn't want my death to be an inconvenience.
 0|If your continued existence becomes a concern, our data tells me that there is an oddly isolated node channeling a vast amount of thermal energy up ahead. You should be able to use it for sustenance.
 0|{Allow player to go to heat source}
 1|This thing isn't going to last me.
