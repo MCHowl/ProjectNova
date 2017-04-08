@@ -11,6 +11,8 @@ public class GameController : MonoBehaviour {
 	private PlayerController playerInstance;
 	private HeatController playerInstanceHeat;
 
+	private float startTime;
+
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
@@ -79,8 +81,9 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Start() {
+		startTime = Time.time;
 		total_Tiles = boardController.getTileCount();
-		gameEndTime = total_Tiles * timePerTile;
+		gameEndTime = total_Tiles * timePerTile + startTime;
 
 		selectorPosition = Instantiate(selector, Input.mousePosition, Quaternion.identity).transform;
 
@@ -90,11 +93,11 @@ public class GameController : MonoBehaviour {
 
 		//Set Enemy Spawn Frequency
 		enemySpawnDelay = gameEndTime / enemySpawnCount;
-		enemySpawnTime = enemySpawnDelay;
+		enemySpawnTime = enemySpawnDelay + startTime;
 
 		//Set Storm Spawn Frequency
 		stormSpawnDelay = gameEndTime / stormSpawnCount;
-		stormSpawnTime = stormSpawnDelay;
+		stormSpawnTime = stormSpawnDelay + startTime;
 
 		nextPlayerWarning = 0;
 
@@ -116,7 +119,7 @@ public class GameController : MonoBehaviour {
 
 		//Performance Checks
 		float percentTilesUnfrozen = (float)(total_Tiles - remaining_Tiles) / (float)total_Tiles;
-		float percentTimePassed = Time.time / gameEndTime;
+		float percentTimePassed = (Time.time - startTime) / (gameEndTime - startTime);
 		float percentHeat = playerInstanceHeat.getPercentHeat();
 
 		//UI Updates
