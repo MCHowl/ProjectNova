@@ -22,13 +22,13 @@ public class DialogueController : MonoBehaviour {
 	private bool isDialogue = false;
 
 	void Awake() {
-		dialogueText = (GameObject.Find("Dialogue")).GetComponent<Text>();
+		dialogueText = (GameObject.Find("Dialogue_Text")).GetComponent<Text>();
 		dialogueText.text = "";
 
-		portraitHolder = (GameObject.Find("Image")).GetComponent<Image>();
+		portraitHolder = (GameObject.Find("Dialogue_Image")).GetComponent<Image>();
 		portraitHolder.gameObject.SetActive(false);
 
-		dialogueFrame = (GameObject.Find("Frame")).GetComponent<Image>();
+		dialogueFrame = (GameObject.Find("Dialogue_Frame")).GetComponent<Image>();
 		dialogueFrame.gameObject.SetActive(false);
 	}
 

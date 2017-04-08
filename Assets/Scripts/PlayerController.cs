@@ -35,10 +35,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		//Debug.Log ("Current Player Heat: " + heatController.getCurrentHeat ());
-		if (heatController.getCurrentHeat() * 5 <= heatController.heatThreshold_unfreeze) {
-			//Debug.Log ("Trigger warning");
-			PlayerWarningEvent();
+		if (heatController.getPercentHeat() <= 0.2) {
+			PlayerWarningEvent ();
 		}
 
 

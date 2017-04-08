@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour {
 	private float enemySpawnDelay;
 	private float enemySpawnTime;
 	private int enemySpawnCount = 3;
+	private int enemyCount = 0;
 
 	private float enemyHealth = 25000f;
 
@@ -36,11 +37,15 @@ public class GameController : MonoBehaviour {
 	public GameObject selector;
 	private Transform selectorPosition;
 
+	private Text progressInfo;
 	private Text playerInfo;
 	private Text tileInfo;
 	private Text timeInfo;
 
-	bool showEnemyDialogue = true;
+	private Transform clockTransform;
+	private Transform heatBarTransform;
+	private Transform progressBarTransform;
+	
 	bool showStormDialogue = true;
 
 	void Awake() {
@@ -54,9 +59,15 @@ public class GameController : MonoBehaviour {
 		boardController = GetComponent<BoardController>();
 		dialogueController = GetComponent<DialogueController>();
 
-		playerInfo = (GameObject.Find("Player Text")).GetComponent<Text>();
+		progressInfo = (GameObject.Find("ProgressBar_Text")).GetComponent<Text>();
+		playerInfo = (GameObject.Find("HeatBar_Text")).GetComponent<Text>();
 		tileInfo = (GameObject.Find("Tile Text")).GetComponent<Text>();
-		timeInfo = (GameObject.Find("Time Text")).GetComponent<Text>();
+		timeInfo = (GameObject.Find("Clock_Text")).GetComponent<Text>();
+
+		clockTransform = (GameObject.Find("Clock_Image")).GetComponent<Transform>();
+		heatBarTransform = (GameObject.Find("HeatBar_Overlay")).GetComponent<Transform>();
+		progressBarTransform = (GameObject.Find("ProgressBar_Overlay")).GetComponent<Transform>();
+
 		InitGame();
 	}
 
@@ -99,23 +110,29 @@ public class GameController : MonoBehaviour {
 
 		//Update Player Heat & Time
 		int remainingTime = (int)(gameEndTime - Time.time);
+		progressInfo.text = "Remaining Tiles: " +  remaining_Tiles + "/" + total_Tiles;
 		playerInfo.text = "Remaining Heat: " + playerInstanceHeat.getCurrentHeat();
-		timeInfo.text = "Remaining Time: " + remainingTime + "s\n"
-						+ "Remaining Tiles: " +  remaining_Tiles + "/" + total_Tiles;
+		timeInfo.text = remainingTime / 60 + ":" + (remainingTime % 60).ToString("00");
 
 		//Performance Checks
-		float percentTilesPassed = ((float)(total_Tiles - remaining_Tiles) / (float)total_Tiles) * 100;
-		float percentTimePassed = (Time.time / gameEndTime) * 100;
+		float percentTilesUnfrozen = (float)(total_Tiles - remaining_Tiles) / (float)total_Tiles;
+		float percentTimePassed = Time.time / gameEndTime;
+		float percentHeat = playerInstanceHeat.getPercentHeat();
+
+		//UI Updates
+		float rotationAngle = 360f - (percentTimePassed * 180f);
+		clockTransform.eulerAngles = new Vector3(0, 0, rotationAngle);
+
+		heatBarTransform.localScale = new Vector3(percentHeat, 1, 1);
+		progressBarTransform.localScale = new Vector3(percentTilesUnfrozen, 1, 1);
 
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
 			boardController.SpawnEnemy(enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
 
-			if (showEnemyDialogue) {
-				dialogueController.StartDialogue("enemy");
-				showEnemyDialogue = false;
-			}
+			dialogueController.StartDialogue("enemy" + enemyCount);
+			enemyCount++;
 		}
 
 		//Start Storm

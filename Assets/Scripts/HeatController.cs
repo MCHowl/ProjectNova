@@ -87,6 +87,10 @@ public class HeatController : MonoBehaviour {
 		return currentHeat;
 	}
 
+	public float getPercentHeat() {
+		return currentHeat / heatThreshold_unfreeze;
+	}
+
 	public float getTemperature(float heat) {
 		return ((mass * heatCapacity * zeroTemp) + heat) / (mass * heatCapacity);
 	}
