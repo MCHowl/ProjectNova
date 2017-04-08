@@ -20,6 +20,7 @@ public class BoardController : MonoBehaviour {
 
 	private int sourceSpawnRange = 5;
 	private int enemySpawnRange = 5;
+	private float hazardSpawnRate = 1;
 
 	private bool[,] spawnableArea;
 	private GameObject[,] gameBoard;
@@ -27,6 +28,7 @@ public class BoardController : MonoBehaviour {
 	private Transform holder_GameBoard;
 	private Transform holder_GameBoarder;
 	private Transform holder_Entities_Source;
+	private Transform holder_Entities_Hazards;
 
 	private int[] pattern1 = {1, 0, 1, 1, 3, 2, 1,
 							  2, 0, 2, 2, 0, 2, 2,
@@ -48,6 +50,7 @@ public class BoardController : MonoBehaviour {
 		holder_GameBoard = new GameObject ("Board").transform;
 		holder_GameBoarder = new GameObject ("Walls").transform;
 		holder_Entities_Source = new GameObject ("Source Entities").transform;
+		holder_Entities_Source = new GameObject ("Hazard Entities").transform;
 	}
 
 	private void SetupBoard() {
@@ -190,12 +193,12 @@ public class BoardController : MonoBehaviour {
 		SpawnPlayer();
 	}
 
-	public IEnumerator SnowStorm(int count, float frequency) {
-		for (int i=0; i < count; i++) {
+	public IEnumerator SnowStorm() {
+		while(true) {
 			Vector3 spawnPosition = new Vector3 (Random.Range(0, board_Width),
 				Random.Range(5, board_Height), 0);
 			Instantiate (snow, spawnPosition, Quaternion.identity);
-			yield return new WaitForSeconds(frequency);
+			yield return new WaitForSeconds(hazardSpawnRate);
 		}
 	}
 
@@ -208,5 +211,9 @@ public class BoardController : MonoBehaviour {
 
 	public int getTileCount() {
 		return tile_Count;
+	}
+
+	public void setHazardSpawnRate(float newRate) {
+		hazardSpawnRate = newRate;
 	}
 }

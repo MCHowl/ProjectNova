@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
@@ -31,10 +32,9 @@ public class GameController : MonoBehaviour {
 
 	private float stormSpawnDelay;
 	private float stormSpawnTime;
-	private int stormSpawnCount = 4;
+	private int stormSpawnCount = 8;
 
-	private int stormLength = 400;
-	private float stormIntensity = 0.05f;
+	private float stormFrequency = 0.05f;
 
 	public GameObject selector;
 	private Transform selectorPosition;
@@ -131,6 +131,12 @@ public class GameController : MonoBehaviour {
 
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
+			if (percentTilesUnfrozen > percentTimePassed) {
+				enemyHealth += 10000;
+			} else {
+				enemyHealth = Mathf.Max(10000f, enemyHealth - 10000);
+			}
+
 			boardController.SpawnEnemy(enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
 
@@ -140,12 +146,21 @@ public class GameController : MonoBehaviour {
 
 		//Start Storm
 		if (Time.time > stormSpawnTime) {
+			
 			if (showStormDialogue) {
 				dialogueController.StartDialogue("storm");
 				showStormDialogue = false;
+				StartCoroutine(boardController.SnowStorm());
 			}
 
-			StartCoroutine(boardController.SnowStorm(stormLength, stormIntensity));
+			// Update storm intensity based on performance
+			if (percentTilesUnfrozen > percentTimePassed) {
+				stormFrequency = Mathf.Max(0.01f, stormFrequency - 0.01f);
+			} else {
+				stormFrequency += 0.01f;
+			}
+
+			boardController.setHazardSpawnRate(stormFrequency);
 			stormSpawnTime += stormSpawnDelay;
 		}
 
@@ -188,7 +203,7 @@ public class GameController : MonoBehaviour {
 			remaining_Tiles += 1;
 		} else if (gameObject.CompareTag ("Player")) {
 			dialogueController.StartDialogue("gameOver");
-			GameOver();
+			StartCoroutine(GameOver());
 		}
 	}
 
@@ -199,7 +214,7 @@ public class GameController : MonoBehaviour {
 
 		if (remaining_Tiles == 0) {
 			dialogueController.StartDialogue("win");
-			GameOver();
+			StartCoroutine(GameOver());
 		}
 	}
 
@@ -210,7 +225,11 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	private void GameOver() {
-		Debug.Log("Game Over");
+	private IEnumerator GameOver() {
+		StopCoroutine(boardController.SnowStorm());
+		yield return new WaitForSeconds (2f);
+
+		SceneManager.LoadScene("Start");
+		Destroy (this.gameObject);
 	}
 }
