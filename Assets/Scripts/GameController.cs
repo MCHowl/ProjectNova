@@ -114,7 +114,7 @@ public class GameController : MonoBehaviour {
 		//Update Player Heat & Time
 		int remainingTime = (int)(gameEndTime - Time.time);
 		progressInfo.text = "Remaining Tiles: " +  remaining_Tiles + "/" + total_Tiles;
-		playerInfo.text = "Remaining Heat: " + playerInstanceHeat.getCurrentHeat();
+		playerInfo.text = "Remaining Heat: " + (playerInstanceHeat.getCurrentHeat()).ToString("#") + " J";
 		timeInfo.text = remainingTime / 60 + ":" + (remainingTime % 60).ToString("00");
 
 		//Performance Checks
@@ -175,14 +175,14 @@ public class GameController : MonoBehaviour {
 				selectorPosition.position = hit.transform.position;
 
 				if (hit.collider.CompareTag ("Tile")) {
-					tileInfo.text = "Mass: " + selectedObject.mass + "kg\n"
-					+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K\n"
-					+ "Current Temperature: " + selectedObject.getTemperature (selectedObject.getCurrentHeat()) + "C\n"
-					+ "Unfreezing Temperature: " + selectedObject.unfreezeTemp + "C";
+					tileInfo.text = "Mass: " + selectedObject.mass + " Kg\n"
+					+ "Heat Capacity: " + selectedObject.heatCapacity + " J/K\n"
+						+ "Current Temperature: " + (selectedObject.getTemperature (selectedObject.getCurrentHeat())).ToString("0.0") + " ‎°C\n"
+						+ "Unfreezing Temperature: " + (selectedObject.unfreezeTemp).ToString("0.0") + " ‎°C";
 				} else if (hit.collider.CompareTag ("Source")) {
-					tileInfo.text = "Source Remaining Heat: " + selectedObject.getCurrentHeat();
+					tileInfo.text = "Source Remaining Heat: " + (selectedObject.getCurrentHeat()).ToString("#") + " J";
 				} else if (hit.collider.CompareTag ("Enemy")) { 
-					tileInfo.text = "Heat Needed to Destroy: " + (selectedObject.getUnfreezeThreshold() - selectedObject.getCurrentHeat());
+					tileInfo.text = "Heat Needed to Destroy: " + ((selectedObject.getUnfreezeThreshold() - selectedObject.getCurrentHeat())).ToString("#") + " J";
 				} else if (hit.collider.CompareTag ("Player")) {
 					tileInfo.text = "You notice your fabulous looking character sprite";
 				}
