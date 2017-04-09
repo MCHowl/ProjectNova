@@ -6,7 +6,7 @@ public class SnowController : MonoBehaviour {
 
 	HeatController heat;
 	float end_y;
-	float fallDistance = 5;
+	float fallDistance = 10;
 
 	void Start () {
 		heat = GetComponent<HeatController>();
