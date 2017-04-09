@@ -178,11 +178,11 @@ public class GameController : MonoBehaviour {
 					tileInfo.text = "Mass: " + selectedObject.mass + "kg\n"
 					+ "Heat Capacity: " + selectedObject.heatCapacity + "J/K\n"
 					+ "Current Temperature: " + selectedObject.getTemperature (selectedObject.getCurrentHeat()) + "C\n"
-					+ "Unfreezing Temperature: " + selectedObject.getTemperature (selectedObject.heatThreshold_unfreeze) + "C";
+					+ "Unfreezing Temperature: " + selectedObject.unfreezeTemp + "C";
 				} else if (hit.collider.CompareTag ("Source")) {
 					tileInfo.text = "Source Remaining Heat: " + selectedObject.getCurrentHeat();
 				} else if (hit.collider.CompareTag ("Enemy")) { 
-					tileInfo.text = "Heat Needed to Destroy: " + (selectedObject.heatThreshold_unfreeze - selectedObject.getCurrentHeat());
+					tileInfo.text = "Heat Needed to Destroy: " + (selectedObject.getUnfreezeThreshold() - selectedObject.getCurrentHeat());
 				} else if (hit.collider.CompareTag ("Player")) {
 					tileInfo.text = "You notice your fabulous looking character sprite";
 				}

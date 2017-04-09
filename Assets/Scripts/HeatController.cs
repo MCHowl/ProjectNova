@@ -17,13 +17,17 @@ public class HeatController : MonoBehaviour {
 	private bool isFrozen;
 
 	public float mass, heatCapacity;
-	public float heatThreshold_freeze, heatThreshold_unfreeze;
+	public float freezeTemp, unfreezeTemp;
+	private float heatThreshold_freeze, heatThreshold_unfreeze;
 
 	public Sprite frozen, unfrozen;
 	private SpriteRenderer spriteRenderer;
 
 	void Start() {
 		spriteRenderer = GetComponent<SpriteRenderer>();
+		heatThreshold_freeze = getHeatValue (freezeTemp);
+		heatThreshold_unfreeze = getHeatValue (unfreezeTemp);
+
 
 		// Set the starting heat of all objects
 		if (gameObject.CompareTag("Tile") || gameObject.CompareTag("Enemy") || gameObject.CompareTag("Hazard")) {
@@ -87,6 +91,14 @@ public class HeatController : MonoBehaviour {
 		return currentHeat;
 	}
 
+	public float getFreezeThreshold() {
+		return heatThreshold_freeze;
+	}
+
+	public float getUnfreezeThreshold() {
+		return heatThreshold_unfreeze;
+	}
+
 	public float getPercentHeat() {
 		return currentHeat / heatThreshold_unfreeze;
 	}
@@ -119,5 +131,10 @@ public class HeatController : MonoBehaviour {
 		isFrozen = false;
 		spriteRenderer.sprite = unfrozen;
 		ObjectUnfrozenEvent(gameObject);
+	}
+
+	private float getHeatValue (float temperature) {
+		return mass * heatCapacity * (temperature + 273.15f);
+
 	}
 }
