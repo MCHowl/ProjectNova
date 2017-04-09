@@ -19,7 +19,8 @@ public class PlayerController : MonoBehaviour {
 	private Vector2 collisionVector;
 	private float moveDistance = 1.0f;
 
-	private float moveTime = 0.1f;
+	private float moveTime = 0.25f;
+	private float moveSensitivity = 0.5f;
 	private float inverseMoveTime;
 
 	private bool isMove = true;
@@ -56,11 +57,14 @@ public class PlayerController : MonoBehaviour {
 	}
 		
 	void FixedUpdate () {
-		int moveHorizontal = (int) Input.GetAxis("Horizontal");
-		int moveVertical = (int) Input.GetAxis("Vertical");
-
-		if (moveHorizontal != 0 || moveVertical != 0) {
-			AttemptMove(moveHorizontal, moveVertical);
+		if (Input.GetAxis ("Horizontal") > moveSensitivity) {
+			AttemptMove (1, 0);
+		} else if (Input.GetAxis ("Horizontal") < -moveSensitivity) {
+			AttemptMove (-1, 0);
+		} else if (Input.GetAxis ("Vertical") > moveSensitivity) {
+			AttemptMove (0, 1);
+		} else if (Input.GetAxis ("Vertical") < -moveSensitivity) {
+			AttemptMove (0, -1);
 		}
 	}
 
