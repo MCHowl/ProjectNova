@@ -1,16 +1,11 @@
-1|What on-
+1|?
 2|Another one.
-1|Huh. I thought they were messing with me when they said this frozen wasteland supports lifeform.
 2|Leave.
 1|Oi. I come in peace!
 2|Then leave in peace, or you’ll leave in pieces.
-1|...
-1|Should have seen that coming.
 0|[Call incoming.]
 4|What now?!
-0|Hostile detected.
-5|I can see that, thank you very much!
-0|Evade at all costs.
+0|Hostile detected. Evade at all costs.
 5|Are you going to tell me anything useful?
 0|[Call disconnected.]
 5|Oi!
