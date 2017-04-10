@@ -1,2 +1,13 @@
-0|Here lies you, the player
-0|Oh well...
+0|Agent, status update.
+3|H-
+0|Agent?
+3|Ha-
+3|Haha. Dying.
+0|Agent, we can't hear you over the interference.
+3|Because you're- Cough. That useful- Cough. Up to the end.
+0|Agent?
+3|Cough. Cough.
+0|Agent?
+0|Agent?
+0|...
+0|Agent has been unexpectedly terminated.
