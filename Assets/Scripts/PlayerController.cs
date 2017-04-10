@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour {
 	private Vector2 collisionVector;
 	private float moveDistance = 1.0f;
 
-	private float moveTime = 0.25f;
+	private float moveTime = 0.125f;
 	private float moveSensitivity = 0.9f;
 	private float inverseMoveTime;
 
