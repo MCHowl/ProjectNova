@@ -43,8 +43,9 @@ public class GameController : MonoBehaviour {
 	public GameObject selector;
 	private Transform selectorTransform;
 	private Transform clockTransform;
-	private Transform heatBarTransform;
-	private Transform progressBarTransform;
+
+	private Image heatBarImage;
+	private Image progressBarImage;
 
 	private GameObject tutorialFrame;
 	
@@ -67,8 +68,9 @@ public class GameController : MonoBehaviour {
 		timeInfo = (GameObject.Find("Clock_Text")).GetComponent<Text>();
 
 		clockTransform = (GameObject.Find("Clock_Image")).GetComponent<Transform>();
-		heatBarTransform = (GameObject.Find("HeatBar_Overlay")).GetComponent<Transform>();
-		progressBarTransform = (GameObject.Find("ProgressBar_Overlay")).GetComponent<Transform>();
+
+		heatBarImage = (GameObject.Find ("HeatBar_Overlay")).GetComponent<Image>();
+		progressBarImage = (GameObject.Find ("ProgressBar_Overlay")).GetComponent<Image>();
 
 		tutorialFrame = GameObject.Find ("Tutorial_Holder");
 		tutorialFrame.SetActive (false);
@@ -131,8 +133,8 @@ public class GameController : MonoBehaviour {
 		float rotationAngle = 360f - (percentTimePassed * 180f);
 		clockTransform.eulerAngles = new Vector3(0, 0, rotationAngle);
 
-		heatBarTransform.localScale = new Vector3(percentHeat, 1, 1);
-		progressBarTransform.localScale = new Vector3(percentTilesUnfrozen, 1, 1);
+		heatBarImage.fillAmount = percentHeat;
+		progressBarImage.fillAmount = percentTilesUnfrozen;
 
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
