@@ -14,8 +14,8 @@ public class BoardController : MonoBehaviour {
 	private PlayerController playerController;
 
 	private int tile_Count;
-	private int board_Width = 75;
-	private int board_Height = 40;
+	private int board_Width = 20;
+	private int board_Height = 20;
 	private int source_Count = 5;
 
 	private int sourceSpawnRange = 5;
@@ -50,7 +50,7 @@ public class BoardController : MonoBehaviour {
 		holder_GameBoard = new GameObject ("Board").transform;
 		holder_GameBoarder = new GameObject ("Walls").transform;
 		holder_Entities_Source = new GameObject ("Source Entities").transform;
-		holder_Entities_Source = new GameObject ("Hazard Entities").transform;
+		holder_Entities_Hazards = new GameObject ("Hazard Entities").transform;
 	}
 
 	private void SetupBoard() {
@@ -101,7 +101,7 @@ public class BoardController : MonoBehaviour {
 
 		spawnableArea[(int) spawnPosition.x, (int) spawnPosition.y] = false;
 		Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
-		CreateTilePattern((int) spawnPosition.x, (int) spawnPosition.y);
+		//CreateTilePattern((int) spawnPosition.x, (int) spawnPosition.y);
 
 		//Spawn 4 corner sources
 		int x_offset = board_Width / 4;
@@ -116,7 +116,7 @@ public class BoardController : MonoBehaviour {
 
 				spawnableArea[(int) spawnPosition.x, (int) spawnPosition.y] = false;
 				Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
-				CreateTilePattern((int) spawnPosition.x, (int) spawnPosition.y);
+				//CreateTilePattern((int) spawnPosition.x, (int) spawnPosition.y);
 			}
 		}
 	}
@@ -164,9 +164,16 @@ public class BoardController : MonoBehaviour {
 		float player_x = playerController.transform.position.x;
 		float player_y = playerController.transform.position.y;
 
-		int spawn_x = (int) Random.Range (Mathf.Max(1, player_x - enemySpawnRange), Mathf.Min(player_x + enemySpawnRange, board_Width - 1));
-		int spawn_y = (int) Random.Range (Mathf.Max(1, player_y - enemySpawnRange), Mathf.Min(player_y + enemySpawnRange, board_Height - 1));
+		int spawn_x, spawn_y;
 
+		while (true) {
+			spawn_x = (int) Random.Range (Mathf.Max(1, player_x - enemySpawnRange), Mathf.Min(player_x + enemySpawnRange, board_Width - 1));
+			spawn_y = (int) Random.Range (Mathf.Max(1, player_y - enemySpawnRange), Mathf.Min(player_y + enemySpawnRange, board_Height - 1));
+
+			if (spawnableArea[spawn_x, spawn_y]) {
+				break;
+			}
+		}
 		Vector3 spawnPosition = new Vector3 (spawn_x, spawn_y, 0);
 		GameObject newEnemy = Instantiate(enemy, spawnPosition, Quaternion.identity);
 
@@ -197,7 +204,8 @@ public class BoardController : MonoBehaviour {
 		while(true) {
 			Vector3 spawnPosition = new Vector3 (Random.Range(0, board_Width),
 				Random.Range(5, board_Height), 0);
-			Instantiate (snow, spawnPosition, Quaternion.identity);
+			//Instantiate (snow, , Quaternion.identity);
+			InstantiateObject (snow, spawnPosition, holder_Entities_Hazards);
 			yield return new WaitForSeconds(hazardSpawnRate);
 		}
 	}

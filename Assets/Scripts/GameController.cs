@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour {
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 0.05f;
+	private float timePerTile = 0.5f;
 	private float gameEndTime;
 
 	private float playerWarningDelay = 30f;
@@ -28,7 +28,7 @@ public class GameController : MonoBehaviour {
 	private int enemySpawnCount = 3;
 	private int enemyCount = 0;
 
-	private float enemyHealth = 25000f;
+	private float enemyHealth = 25f;
 
 	private int stormSpawnCount = 8;
 	private float stormSpawnDelay;
@@ -97,19 +97,20 @@ public class GameController : MonoBehaviour {
 		tileInfo.text = "";
 
 		//Set Enemy Spawn Frequency
-		enemySpawnDelay = gameEndTime / enemySpawnCount;
+		enemySpawnDelay = gameEndTime / (enemySpawnCount + 1);
 		enemySpawnTime = enemySpawnDelay + startTime;
 
 		//Set Storm Spawn Frequency
-		stormSpawnDelay = gameEndTime / stormSpawnCount;
+		stormSpawnDelay = gameEndTime / (stormSpawnCount + 1);
 		stormSpawnTime = stormSpawnDelay + startTime;
 
 		nextPlayerWarning = 0;
 
 		dialogueController.StartDialogue("intro");
-		dialogueController.StartDialogue("equation");
 
 		StartCoroutine (ShowTutorial ());
+
+		dialogueController.StartDialogue("equation");
 	}
 
 	void Update() {
@@ -139,9 +140,9 @@ public class GameController : MonoBehaviour {
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime) {
 			if (percentTilesUnfrozen > percentTimePassed) {
-				enemyHealth += 10000;
+				enemyHealth += 20;
 			} else {
-				enemyHealth = Mathf.Max(10000f, enemyHealth - 10000);
+				enemyHealth = Mathf.Max(0, enemyHealth - 10);
 			}
 
 			boardController.SpawnEnemy(enemyHealth);
