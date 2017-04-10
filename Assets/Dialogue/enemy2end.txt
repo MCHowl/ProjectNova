@@ -1,17 +1,11 @@
-4|I really don’t like violence, but.
-4|Yield.
+4|I really don’t like violence, but. Yield.
 6|……
 1|We can be civil about this, alright?
 1|Or you can poof off to wherever you normally disappear to.
 6|I can’t.
-1|You can’t.
 7|You’ve whittled our domain down to nothing.
 1|What?
-7|This suffocating heat, this cloying humidity. It feels like a slow decay crawling down through our pores.
-1|I- That’s- We can fix it. I mean, maybe it feels a little strange now, but it can’t be all that bad.
-1|You’ll get used to it.
 7|You will kill me now and spare me the indignity of such a pitiable demise.
-1|Look, maybe, it’s just an allergy. I’ve got a medical team on speed dial, and-
 1|Hey!
 7|[Laboured Breathing]
 1|He’s still breathing.
