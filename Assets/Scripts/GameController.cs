@@ -20,7 +20,7 @@ public class GameController : MonoBehaviour {
 	private float timePerTile = 0.5f;
 	private float gameEndTime;
 
-	private float playerWarningDelay = 30f;
+	private float playerWarningDelay = 5f;
 	private float nextPlayerWarning;
 
 	private float enemySpawnDelay;

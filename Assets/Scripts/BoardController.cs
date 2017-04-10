@@ -93,6 +93,7 @@ public class BoardController : MonoBehaviour {
 	 * Spawn 5 source tiles spread evenly across the map
 	 **/
 	private void SpawnSources() {
+		/*
 		//Spawn middle source
 		int x_pos = (int) Random.Range(board_Width/2 - sourceSpawnRange, board_Width/2 + sourceSpawnRange);
 		int y_pos = (int) Random.Range(board_Height/2 - sourceSpawnRange, board_Height/2 + sourceSpawnRange);
@@ -102,6 +103,9 @@ public class BoardController : MonoBehaviour {
 		spawnableArea[(int) spawnPosition.x, (int) spawnPosition.y] = false;
 		Destroy(gameBoard [(int)spawnPosition.x, (int)spawnPosition.y]);
 		//CreateTilePattern((int) spawnPosition.x, (int) spawnPosition.y);
+		*/
+		int x_pos, y_pos;
+		Vector3 spawnPosition;
 
 		//Spawn 4 corner sources
 		int x_offset = board_Width / 4;

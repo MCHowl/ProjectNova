@@ -25,7 +25,7 @@ public class TileController : MonoBehaviour {
 			} else {
 				Debug.LogWarning ("Unable to find 'HeatController' script on " + other.gameObject.name);
 			}
-		} else {
+		} /*else {
 			if (sourceHeatController != null) {
 				if (other.gameObject.CompareTag ("Enemy")) {
 					heatController.Unfreeze (sourceHeatController, heatController);
@@ -33,6 +33,6 @@ public class TileController : MonoBehaviour {
 			} else {
 				Debug.LogWarning ("Unable to find 'HeatController' script on " + other.gameObject.name);
 			}
-		}
+		}*/
 	}
 }
