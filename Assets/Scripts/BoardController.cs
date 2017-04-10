@@ -18,7 +18,7 @@ public class BoardController : MonoBehaviour {
 	private int board_Height = 20;
 	private int source_Count = 5;
 
-	private int sourceSpawnRange = 5;
+	private int sourceSpawnRange = 3;
 	private int enemySpawnRange = 5;
 	private float hazardSpawnRate = 1;
 
@@ -152,7 +152,7 @@ public class BoardController : MonoBehaviour {
 		if (startSource.position.x <= 1) {
 			playerSpawn_x = startSource.position.x + 1;
 		} else {
-			playerSpawn_x = startSource.position.x + 1;
+			playerSpawn_x = startSource.position.x - 1;
 		}
 
 		Vector3 playerSpawn = new Vector3 (playerSpawn_x, startSource.position.y, 0f);

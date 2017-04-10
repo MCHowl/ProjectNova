@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour {
 	private float moveDistance = 1.0f;
 
 	private float moveTime = 0.25f;
-	private float moveSensitivity = 0.5f;
+	private float moveSensitivity = 0.9f;
 	private float inverseMoveTime;
 
 	private bool isMove = true;

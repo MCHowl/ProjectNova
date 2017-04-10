@@ -30,10 +30,10 @@ public class GameController : MonoBehaviour {
 
 	private float enemyHealth = 25f;
 
-	private int stormSpawnCount = 8;
+	private int stormSpawnCount = 3;
 	private float stormSpawnDelay;
 	private float stormSpawnTime;
-	private float stormFrequency = 0.05f;
+	private float stormFrequency = 1f;
 
 	private Text progressInfo;
 	private Text playerInfo;
