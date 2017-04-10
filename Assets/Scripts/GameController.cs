@@ -50,6 +50,7 @@ public class GameController : MonoBehaviour {
 	private GameObject tutorialFrame;
 	
 	private bool showStormDialogue = true;
+	private bool isGameOver = false;
 
 	void Awake() {
 		if (instance == null) {
@@ -115,8 +116,9 @@ public class GameController : MonoBehaviour {
 
 	void Update() {
 		//Game Time Check
-		if (Time.time > gameEndTime) {
-			playerInstance.FreezePlayer();
+		if (Time.time > gameEndTime && !isGameOver) {
+			isGameOver = true;
+			StartCoroutine(GameOver(false));
 		}
 
 		//Update Player Heat & Time
@@ -138,7 +140,7 @@ public class GameController : MonoBehaviour {
 		progressBarImage.fillAmount = percentTilesUnfrozen;
 
 		//Spawn Enemy
-		if (Time.time > enemySpawnTime) {
+		if (Time.time > enemySpawnTime && enemyCount < enemySpawnCount) {
 			if (percentTilesUnfrozen > percentTimePassed) {
 				enemyHealth += 20;
 			} else {
@@ -210,8 +212,7 @@ public class GameController : MonoBehaviour {
 		if (gameObject.CompareTag("Tile")) {
 			remaining_Tiles += 1;
 		} else if (gameObject.CompareTag ("Player")) {
-			dialogueController.StartDialogue("gameOver");
-			StartCoroutine(GameOver());
+			StartCoroutine(GameOver(false));
 		}
 	}
 
@@ -221,8 +222,7 @@ public class GameController : MonoBehaviour {
 		} 
 
 		if (remaining_Tiles == 0) {
-			dialogueController.StartDialogue("win");
-			StartCoroutine(GameOver());
+			StartCoroutine(GameOver(true));
 		}
 	}
 
@@ -240,11 +240,18 @@ public class GameController : MonoBehaviour {
 		tutorialFrame.SetActive (false);
 	}
 
-	private IEnumerator GameOver() {
+	private IEnumerator GameOver(bool win) {
 		StopCoroutine(boardController.SnowStorm());
-		yield return new WaitForSeconds (2f);
+		if (win) {
+			dialogueController.StartDialogue("win");
+			yield return new WaitForSeconds (1f);
+			SceneManager.LoadScene("Win");
+		} else {
+			dialogueController.StartDialogue("gameOver");
+			yield return new WaitForSeconds (1f);
+			SceneManager.LoadScene("Lose");
+		}
 
-		SceneManager.LoadScene("Start");
 		Destroy (this.gameObject);
 	}
 }
