@@ -46,7 +46,14 @@ public class DialogueController : MonoBehaviour {
 	private void Importer(string filename) {
 		StreamReader selectedFile = new StreamReader (Application.dataPath + "/Dialogue/" + filename + ".txt");
 
+		#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 		tempList = selectedFile.ReadToEnd ().Split (new string[] { "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries).ToList();
+
+		#else 
+		tempList = selectedFile.ReadToEnd ().Split (new string[] { "\n" }, System.StringSplitOptions.RemoveEmptyEntries).ToList();
+
+		#endif
+
 		foreach(string i in tempList) {
 			splitLine = i.Split(new string[] { "|" }, System.StringSplitOptions.RemoveEmptyEntries).ToList();
 			dialogueList.Add(splitLine);
