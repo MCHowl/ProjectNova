@@ -30,25 +30,25 @@ public class GameController : MonoBehaviour {
 
 	private float enemyHealth = 25000f;
 
+	private int stormSpawnCount = 8;
 	private float stormSpawnDelay;
 	private float stormSpawnTime;
-	private int stormSpawnCount = 8;
-
 	private float stormFrequency = 0.05f;
-
-	public GameObject selector;
-	private Transform selectorPosition;
 
 	private Text progressInfo;
 	private Text playerInfo;
 	private Text tileInfo;
 	private Text timeInfo;
 
+	public GameObject selector;
+	private Transform selectorTransform;
 	private Transform clockTransform;
 	private Transform heatBarTransform;
 	private Transform progressBarTransform;
+
+	private GameObject tutorialFrame;
 	
-	bool showStormDialogue = true;
+	private bool showStormDialogue = true;
 
 	void Awake() {
 		if (instance == null) {
@@ -70,6 +70,9 @@ public class GameController : MonoBehaviour {
 		heatBarTransform = (GameObject.Find("HeatBar_Overlay")).GetComponent<Transform>();
 		progressBarTransform = (GameObject.Find("ProgressBar_Overlay")).GetComponent<Transform>();
 
+		tutorialFrame = GameObject.Find ("Tutorial_Holder");
+		tutorialFrame.SetActive (false);
+
 		InitGame();
 	}
 
@@ -85,7 +88,7 @@ public class GameController : MonoBehaviour {
 		total_Tiles = boardController.getTileCount();
 		gameEndTime = total_Tiles * timePerTile + startTime;
 
-		selectorPosition = Instantiate(selector, Input.mousePosition, Quaternion.identity).transform;
+		selectorTransform = Instantiate(selector, Input.mousePosition, Quaternion.identity).transform;
 
 		playerInfo.text = "";
 		timeInfo.text = "";
@@ -103,6 +106,8 @@ public class GameController : MonoBehaviour {
 
 		dialogueController.StartDialogue("intro");
 		dialogueController.StartDialogue("equation");
+
+		StartCoroutine (ShowTutorial ());
 	}
 
 	void Update() {
@@ -172,7 +177,7 @@ public class GameController : MonoBehaviour {
 			HeatController selectedObject = hit.transform.gameObject.GetComponent<HeatController>();
 
 			if (selectedObject != null) {
-				selectorPosition.position = hit.transform.position;
+				selectorTransform.position = hit.transform.position;
 
 				if (hit.collider.CompareTag ("Tile")) {
 					tileInfo.text = "Mass: " + selectedObject.mass + " Kg\n"
@@ -223,6 +228,13 @@ public class GameController : MonoBehaviour {
 			nextPlayerWarning = Time.time + playerWarningDelay;
 			dialogueController.StartDialogue ("heatWarning");
 		}
+	}
+
+	private IEnumerator ShowTutorial() {
+		yield return new WaitForSeconds (1f);
+		tutorialFrame.SetActive (true);
+		yield return new WaitForSeconds (3f);
+		tutorialFrame.SetActive (false);
 	}
 
 	private IEnumerator GameOver() {

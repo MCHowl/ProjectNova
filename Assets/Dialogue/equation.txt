@@ -1,12 +1,12 @@
-1|Okay. This thing’s taking longer to defrost.
-0|[Incoming call.]
-0|Agent. It seems you’ve run into an iceberg.
+1|Okay. This thing's taking longer to defrost.
+0|[Incoming call]
+0|Agent. It seems you've run into an iceberg.
 1|You didn’t just make a Titanic reference.
 0|...
 1|...
 1|Are you stalking me.
 0|I am committed to see your mission a success.
-1|You’re stalking me through my implants.
+1|You're stalking me through my implants.
 0|It seems like the dirt is packed tighter here, Agent. A larger mass requires a larger amount of thermal energy to raise per unit temperature.
 1|I knew that.
 0|Bear in mind that mass aside, different materials will affect the amount of heat energy you need, as will the initial temperature of the object.
