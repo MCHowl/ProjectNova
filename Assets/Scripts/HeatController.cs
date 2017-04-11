@@ -23,20 +23,22 @@ public class HeatController : MonoBehaviour {
 	public Sprite frozen, unfrozen;
 	private SpriteRenderer spriteRenderer;
 
-	void Start() {
-		spriteRenderer = GetComponent<SpriteRenderer>();
+	void Awake() {
 		heatThreshold_freeze = getHeatValue (freezeTemp);
 		heatThreshold_unfreeze = getHeatValue (unfreezeTemp);
+	}
 
+	void Start() {
+		spriteRenderer = GetComponent<SpriteRenderer>();
 
 		// Set the starting heat of all objects
+		maxHeat = heatThreshold_unfreeze;
+
 		if (gameObject.CompareTag("Tile") || gameObject.CompareTag("Enemy") || gameObject.CompareTag("Hazard")) {
 			currentHeat = heatThreshold_freeze;
-			maxHeat = heatThreshold_unfreeze;
 			setFrozen();
 		} else if (gameObject.CompareTag("Player") || gameObject.CompareTag("Source")) {
 			currentHeat = heatThreshold_unfreeze;
-			maxHeat = heatThreshold_unfreeze;
 			setUnfrozen();
 		} else {
 			Debug.LogWarning("'HeatController' script attached to invalid object " + gameObject.name);
@@ -84,7 +86,7 @@ public class HeatController : MonoBehaviour {
 	 **/
 
 	public void setEnemyHealth(float health) {
-		heatThreshold_unfreeze = heatThreshold_freeze + getHeatValue(health);
+		heatThreshold_unfreeze = heatThreshold_freeze + health;
 		maxHeat = heatThreshold_unfreeze;
 	}
 

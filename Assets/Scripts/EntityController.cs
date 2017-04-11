@@ -17,7 +17,7 @@ public class EntityController : MonoBehaviour {
 										new Vector2(-1,0)};
 
 	private float moveDelay = 2f;
-	private float moveTime = 0.5f;
+	private float moveTime = 0.25f;
 	private float inverseMoveTime;
 
 	void Start () {
@@ -26,6 +26,8 @@ public class EntityController : MonoBehaviour {
 		rb2d = GetComponent<Rigidbody2D>();
 
 		inverseMoveTime = 1f / moveTime;
+
+		Debug.Log(heatController.getCurrentHeat() +", " + heatController);
 
 		InvokeRepeating("AttemptMove", moveDelay, moveDelay);
 	}

@@ -17,10 +17,10 @@ public class GameController : MonoBehaviour {
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 1f;
+	private float timePerTile = 1.1f;
 	private float gameEndTime;
 
-	private float playerWarningDelay = 5f;
+	private float playerWarningDelay = 10f;
 	private float nextPlayerWarning;
 
 	private float enemySpawnDelay;
@@ -28,12 +28,12 @@ public class GameController : MonoBehaviour {
 	private int enemySpawnCount = 3;
 	private int enemyCount = 0;
 
-	private float enemyHealth = 25f;
+	private float enemyHealth = 50000f;
 
 	private int stormSpawnCount = 4;
 	private float stormSpawnDelay;
 	private float stormSpawnTime;
-	private float stormFrequency = 1f;
+	private float stormFrequency = 0.75f;
 
 	private Text progressInfo;
 	private Text playerInfo;
@@ -142,9 +142,9 @@ public class GameController : MonoBehaviour {
 		//Spawn Enemy
 		if (Time.time > enemySpawnTime && enemyCount < enemySpawnCount) {
 			if (percentTilesUnfrozen > percentTimePassed) {
-				enemyHealth += 20;
+				enemyHealth += 25000;
 			} else {
-				enemyHealth = Mathf.Max(0, enemyHealth - 10);
+				enemyHealth = Mathf.Max(25000, enemyHealth - 25000);
 			}
 
 			boardController.SpawnEnemy(enemyHealth);
@@ -165,9 +165,9 @@ public class GameController : MonoBehaviour {
 
 			// Update storm intensity based on performance
 			if (percentTilesUnfrozen > percentTimePassed) {
-				stormFrequency = Mathf.Max(0.01f, stormFrequency - 0.01f);
+				stormFrequency = Mathf.Max(0.25f, stormFrequency - 0.25f);
 			} else {
-				stormFrequency += 0.01f;
+				stormFrequency += 0.25f;
 			}
 
 			boardController.setHazardSpawnRate(stormFrequency);

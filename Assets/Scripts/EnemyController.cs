@@ -13,7 +13,7 @@ public class EnemyController : MonoBehaviour {
 
 	private Transform target;
 
-	private float moveDelay = 0.5f;
+	private float moveDelay = 1f;
 	private float moveTime = 0.25f;
 	private float inverseMoveTime;
 

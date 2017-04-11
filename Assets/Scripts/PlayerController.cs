@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour {
 	private float moveDistance = 1.0f;
 
 	private float moveTime = 0.125f;
-	private float moveSensitivity = 0.9f;
+	private float moveSensitivity = 0.5f;
 	private float inverseMoveTime;
 
 	private bool isMove = true;
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		if (heatController.getPercentHeat() <= 0.2) {
+		if (heatController.getPercentHeat() <= 0.35) {
 			PlayerWarningEvent ();
 		}
 

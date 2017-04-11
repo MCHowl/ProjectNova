@@ -19,7 +19,7 @@ public class BoardController : MonoBehaviour {
 	private int source_Count = 5;
 
 	private int sourceSpawnRange = 3;
-	private int enemySpawnRange = 5;
+	private int enemySpawnRange = 3;
 	private float hazardSpawnRate = 1;
 
 	private bool[,] spawnableArea;
