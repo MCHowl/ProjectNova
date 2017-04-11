@@ -1,0 +1,27 @@
+0|Good work, Agent.
+1|……
+0|We’ve programmed the appropriate coordinates into your ship, it’ll take you straight home.
+1|…………
+1|Can I ask you something?
+0|Of course.
+1|That was……
+1|Me, going around, defrosting the terrain and stuff.
+1|Discovering lifeform.
+1|That was a recon, right?
+0|……
+0|What else could it be?
+4|Look, you guys didn't-
+4|I didn't just help you-
+4|Tell me that wasn't an acquisition.
+0|It's not an acquisition.
+1|Really?
+0|It's not an acquisition.
+1|…… okay.
+1|But. There was a guy. He needs help, medical attention.
+0|The med unit will see to him when Team Beta lands on target.
+1|Okay.
+2|I mean, that's good.
+0|Is that all, Agent?
+2|Yeah.
+0|We'll see you soon.
+1|Yeah, see you.

@@ -1,0 +1,36 @@
+0|Agent, status report.
+1|Hm.
+0|Status report.
+1|Freezing.
+0|What's the temperature like in Interrium?
+1|Like a severe case of hypothermia.
+0|Can I get a straight answer?
+1|You could pull the data straight from my implants.
+0|That would be an unnecessary invasion of privacy.
+1|Yes.
+4|……
+4|Feel free to read off the machines you've put in me.
+0|Your compliance is greatly appreciated.
+0|[Downloading Data]
+0|[Data Acquired]
+0|Hmm…
+0|It appears that the Interrium sector shows signs of supporting lifeform.
+4|Lifeform.
+0|Yes.
+4|Was that a joke?
+0|As such, you need to make defrosting the terrain your foremost priority.
+4|And staying alive is only secondary, of course.
+0|Do note that unexpected termination would be terribly inconvenient. Sending a new agent to Interrium would be far too costly in so short a period of time.
+4|I wouldn't want my death to be an inconvenience.
+0|If your continued existence becomes a concern, our data tells me that there is an oddly isolated node channeling a vast amount of thermal energy up ahead. You should be able to use it for sustenance.
+1|This thing isn't going to last me.
+0|Probability dictates that more of such nodes may be uncovered as you explore the area.
+1|I don't suppose you have a map I can download?
+0|You're in uncharted ice, Agent.
+1|I'd appreciate that pun a lot more if I wasn't going to die.
+0|Before we cut our connection, I've been told to inform you that according to past reports, weather conditions become dangerously unpredictable come nightfall.
+0|So we'll transport you back to your ship through molecular relocation before dusk. I'm afraid even your altered physique wouldn't be able to survive the elements there.
+0|Good luck, Agent.
+1|Yeah, thanks.
+0|[Call disconnected.]
+1|For nothing.
