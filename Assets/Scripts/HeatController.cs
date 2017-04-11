@@ -147,9 +147,9 @@ public class HeatController : MonoBehaviour {
 
 	IEnumerator Fade()	{
 		Color spriteColor = Color.white;
-		float fade = 0.5f;
-		float fadeInTime = 0.25f;
-		float fadeOutTime = 0.25f;
+		float fade = 1f;
+		float fadeInTime = 0.2f;
+		float fadeOutTime = 0.1f;
 		float startTime = Time.time;
 
 		while(fade > 0f) {
