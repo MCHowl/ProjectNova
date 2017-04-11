@@ -21,7 +21,7 @@ public class ShowInstructions : MonoBehaviour {
 		yield return new WaitForSeconds (3f);
 		tutorialFrame.SetActive (false);
 		instructionFrame.SetActive (true);
-		yield return new WaitForSeconds (5f);
+		yield return new WaitForSeconds (7f);
 		instructionFrame.SetActive (false);
 	}
 }

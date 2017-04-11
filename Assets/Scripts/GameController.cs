@@ -17,10 +17,10 @@ public class GameController : MonoBehaviour {
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 1.1f;
+	private float timePerTile = 1.2f;
 	private float gameEndTime;
 
-	private float playerWarningDelay = 10f;
+	private float playerWarningDelay = 15f;
 	private float nextPlayerWarning;
 
 	private float enemySpawnDelay;
@@ -28,7 +28,7 @@ public class GameController : MonoBehaviour {
 	private int enemySpawnCount = 3;
 	private int enemyCount = 0;
 
-	private float enemyHealth = 50000f;
+	private float enemyHealth = 75000f;
 
 	private int stormSpawnCount = 4;
 	private float stormSpawnDelay;
@@ -108,8 +108,9 @@ public class GameController : MonoBehaviour {
 		stormSpawnDelay = gameEndTime / (stormSpawnCount + 1);
 		stormSpawnTime = stormSpawnDelay + startTime;
 
-		nextPlayerWarning = 0;
+		nextPlayerWarning = playerWarningDelay;
 
+		closeTutorials();
 		dialogueController.StartDialogue("intro");
 		StartCoroutine(ShowTutorial());
 	}
@@ -150,6 +151,7 @@ public class GameController : MonoBehaviour {
 			boardController.SpawnEnemy(enemyHealth);
 			enemySpawnTime += enemySpawnDelay;
 
+			closeTutorials();
 			dialogueController.StartDialogue("enemy" + enemyCount);
 			enemyCount++;
 		}
@@ -158,6 +160,7 @@ public class GameController : MonoBehaviour {
 		if (Time.time > stormSpawnTime) {
 			
 			if (showStormDialogue) {
+				closeTutorials();
 				dialogueController.StartDialogue("storm");
 				showStormDialogue = false;
 				StartCoroutine(boardController.SnowStorm());
@@ -229,8 +232,14 @@ public class GameController : MonoBehaviour {
 	private void TriggerPlayerWarning() {
 		if (Time.time > nextPlayerWarning) {
 			nextPlayerWarning = Time.time + playerWarningDelay;
+			closeTutorials();
 			dialogueController.StartDialogue ("heatWarning");
 		}
+	}
+
+	private void closeTutorials() {
+		tutorialFrame.SetActive (false);
+		instructionFrame.SetActive (false);
 	}
 
 	private IEnumerator ShowTutorial() {
@@ -239,7 +248,7 @@ public class GameController : MonoBehaviour {
 		yield return new WaitForSeconds (3f);
 		tutorialFrame.SetActive (false);
 		instructionFrame.SetActive (true);
-		yield return new WaitForSeconds (5f);
+		yield return new WaitForSeconds (7f);
 		instructionFrame.SetActive (false);
 	}
 
@@ -247,11 +256,13 @@ public class GameController : MonoBehaviour {
 		StopCoroutine(boardController.SnowStorm());
 		if (win) {
 			yield return new WaitForSeconds (1f);
+			closeTutorials();
 			dialogueController.StartDialogue("win");
 			yield return new WaitForSeconds (1f);
 			SceneManager.LoadScene("Win");
 		} else {
 			yield return new WaitForSeconds (1f);
+			closeTutorials();
 			dialogueController.StartDialogue("gameOver");
 			yield return new WaitForSeconds (1f);
 			SceneManager.LoadScene("Lose");

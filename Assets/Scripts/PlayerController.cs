@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
 
 	public LayerMask blockingLayer;
 
+	private AudioSource[] audioSources;
 	private Animator animator;
 	private Rigidbody2D rb2d;
 	private BoxCollider2D boxCollider;
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour {
 	private bool isMove = true;
 
 	void Start() {
+		audioSources = GetComponents<AudioSource>();
 		animator = GetComponent<Animator>();
 		rb2d = GetComponent<Rigidbody2D>();
 		boxCollider = GetComponent<BoxCollider2D>();
@@ -47,6 +49,7 @@ public class PlayerController : MonoBehaviour {
 			if (targetHeatController != null) {
 				if (inCollisionWith.CompareTag("Source")) {
 					if (Input.GetKeyDown(KeyCode.Space)) {
+						audioSources[1].Play();
 						heatController.Unfreeze(heatController, targetHeatController);
 					}
 				}
@@ -83,6 +86,8 @@ public class PlayerController : MonoBehaviour {
 
 	public void AttemptMove(float moveHorizontal, float moveVertical) {
 		if (!heatController.getIsFrozen () && isMove) {
+			audioSources[0].Play();
+
 			if (moveHorizontal != 0) {
 				if (moveHorizontal > 0) {
 					animator.SetTrigger ("WalkLeft");
