@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour {
 	private int remaining_Tiles = 0;
 	private int total_Tiles;
 
-	private float timePerTile = 0.5f;
+	private float timePerTile = 1f;
 	private float gameEndTime;
 
 	private float playerWarningDelay = 5f;
@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour {
 
 	private float enemyHealth = 25f;
 
-	private int stormSpawnCount = 3;
+	private int stormSpawnCount = 4;
 	private float stormSpawnDelay;
 	private float stormSpawnTime;
 	private float stormFrequency = 1f;
@@ -48,6 +48,7 @@ public class GameController : MonoBehaviour {
 	private Image progressBarImage;
 
 	private GameObject tutorialFrame;
+	private GameObject instructionFrame;
 	
 	private bool showStormDialogue = true;
 	private bool isGameOver = false;
@@ -75,6 +76,8 @@ public class GameController : MonoBehaviour {
 
 		tutorialFrame = GameObject.Find ("Tutorial_Holder");
 		tutorialFrame.SetActive (false);
+		instructionFrame = GameObject.Find ("Instructions_Holder");
+		instructionFrame.SetActive (false);
 
 		InitGame();
 	}
@@ -108,10 +111,7 @@ public class GameController : MonoBehaviour {
 		nextPlayerWarning = 0;
 
 		dialogueController.StartDialogue("intro");
-
-		StartCoroutine (ShowTutorial ());
-
-		dialogueController.StartDialogue("equation");
+		StartCoroutine(ShowTutorial());
 	}
 
 	void Update() {
@@ -238,15 +238,20 @@ public class GameController : MonoBehaviour {
 		tutorialFrame.SetActive (true);
 		yield return new WaitForSeconds (3f);
 		tutorialFrame.SetActive (false);
+		instructionFrame.SetActive (true);
+		yield return new WaitForSeconds (5f);
+		instructionFrame.SetActive (false);
 	}
 
 	private IEnumerator GameOver(bool win) {
 		StopCoroutine(boardController.SnowStorm());
 		if (win) {
+			yield return new WaitForSeconds (1f);
 			dialogueController.StartDialogue("win");
 			yield return new WaitForSeconds (1f);
 			SceneManager.LoadScene("Win");
 		} else {
+			yield return new WaitForSeconds (1f);
 			dialogueController.StartDialogue("gameOver");
 			yield return new WaitForSeconds (1f);
 			SceneManager.LoadScene("Lose");

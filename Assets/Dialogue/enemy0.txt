@@ -1,8 +1,8 @@
-1|?
-2|Another one.
-2|Leave.
+﻿1|?
+6|Another one.
+6|Leave.
 1|Oi. I come in peace!
-2|Then leave in peace, or you’ll leave in pieces.
+6|Then leave in peace, or you’ll leave in pieces.
 0|[Call incoming.]
 4|What now?!
 0|Hostile detected. Evade at all costs.
