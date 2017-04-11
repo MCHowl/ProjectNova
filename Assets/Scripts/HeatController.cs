@@ -130,7 +130,13 @@ public class HeatController : MonoBehaviour {
 
 	private void setUnfrozen() {
 		isFrozen = false;
-		spriteRenderer.sprite = unfrozen;
+
+		if (gameObject.CompareTag ("Tile")) {
+			StartCoroutine (Fade ());
+		} else {
+			spriteRenderer.sprite = unfrozen;
+		}
+			
 		ObjectUnfrozenEvent(gameObject);
 	}
 
@@ -138,4 +144,39 @@ public class HeatController : MonoBehaviour {
 		return mass * heatCapacity * (temperature + 273.15f);
 
 	}
+
+	IEnumerator Fade()	{
+		Color spriteColor = Color.white;
+		float fade = 0.5f;
+		float fadeInTime = 0.25f;
+		float fadeOutTime = 0.25f;
+		float startTime = Time.time;
+
+		while(fade > 0f) {
+			fade = Mathf.Lerp(1f, 0f, (Time.time - startTime) / fadeOutTime);
+			spriteColor.a = fade;
+			spriteRenderer.color = spriteColor;
+			yield return null;
+		}
+		fade = 0f;
+		spriteColor.a = fade;
+		spriteRenderer.color = spriteColor;
+		spriteRenderer.sprite = unfrozen;
+		yield return new WaitForSeconds(0.1f);
+
+		startTime = Time.time;
+		while(fade < 1f) {
+			fade = Mathf.Lerp(0f, 1f, (Time.time - startTime) / fadeInTime);
+			spriteColor.a = fade;
+			spriteRenderer.color = spriteColor;
+			yield return null;
+		}
+
+		//Make sure it's set to exactly 1f
+		fade = 1f;
+		spriteColor.a = fade;
+		spriteRenderer.color = spriteColor;
+		yield return null;
+	}
+
 }
