@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour {
 
 	private bool isMove = true;
 
+	private enum dir {up, down, left, right};
+	private dir curr_dir = dir.down;
+
 	void Start() {
 		audioSources = GetComponents<AudioSource>();
 		animator = GetComponent<Animator>();
@@ -60,14 +63,46 @@ public class PlayerController : MonoBehaviour {
 	}
 		
 	void FixedUpdate () {
-		if (Input.GetAxis ("Horizontal") > moveSensitivity) {
-			AttemptMove (1, 0);
-		} else if (Input.GetAxis ("Horizontal") < -moveSensitivity) {
-			AttemptMove (-1, 0);
-		} else if (Input.GetAxis ("Vertical") > moveSensitivity) {
-			AttemptMove (0, 1);
-		} else if (Input.GetAxis ("Vertical") < -moveSensitivity) {
-			AttemptMove (0, -1);
+		// Check if player can move
+		if (isMove && Input.anyKey) {
+			// Check orientation for turn/movement
+			if (Input.GetKey (KeyCode.UpArrow)) {
+				isMove = false;
+				if (curr_dir == dir.up) {
+					AttemptMove (0, 1);
+				} else {
+					curr_dir = dir.up;
+					animator.SetTrigger ("TurnUp");
+					isMove = true;
+				}
+			} else if (Input.GetKey (KeyCode.DownArrow)) {
+				isMove = false;
+				if (curr_dir == dir.down) {
+					AttemptMove (0, -1);
+				} else {
+					curr_dir = dir.down;
+					animator.SetTrigger ("TurnDown");
+					isMove = true;
+				}
+			} else if (Input.GetKey (KeyCode.LeftArrow)) {
+				isMove = false;
+				if (curr_dir == dir.left) {
+					AttemptMove (-1, 0);
+				} else {
+					curr_dir = dir.left;
+					animator.SetTrigger ("TurnRight");
+					isMove = true;
+				}
+			} else if (Input.GetKey (KeyCode.RightArrow)) {
+				isMove = false;
+				if (curr_dir == dir.right) {
+					AttemptMove (1, 0);
+				} else {
+					curr_dir = dir.right;
+					animator.SetTrigger ("TurnLeft");
+					isMove = true;
+				}
+			}
 		}
 	}
 
@@ -85,23 +120,10 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void AttemptMove(float moveHorizontal, float moveVertical) {
-		if (!heatController.getIsFrozen () && isMove) {
+		if (!heatController.getIsFrozen ()) {
 			audioSources[0].Play();
 
-			if (moveHorizontal != 0) {
-				if (moveHorizontal > 0) {
-					animator.SetTrigger ("WalkLeft");
-				} else {
-					animator.SetTrigger ("WalkRight");
-				}
-				moveVertical = 0;
-			} else {
-				if (moveVertical > 0) {
-					animator.SetTrigger ("WalkUp");
-				} else {
-					animator.SetTrigger ("WalkDown");
-				}
-			}
+			animator.SetTrigger("Walk");
 
 			Vector2 movement = new Vector2 (moveHorizontal * moveDistance, moveVertical * moveDistance);
 			Vector2 collisionCheck = new Vector2 ((moveDistance + collisionVector.x / 2) * moveHorizontal,
@@ -116,11 +138,11 @@ public class PlayerController : MonoBehaviour {
 			boxCollider.enabled = true;
 
 			if (hit.transform == null) {
-				isMove = false;
 				ResetCollision();
 				StartCoroutine(Move (end));
 			} else {
 				EnterCollision(hit.collider);
+				isMove = true;
 			}
 		}
 	}
