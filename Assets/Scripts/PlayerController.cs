@@ -45,7 +45,6 @@ public class PlayerController : MonoBehaviour {
 			PlayerWarningEvent ();
 		}
 
-
 		if (inCollisionWith != null) {
 			HeatController targetHeatController = inCollisionWith.GetComponent<HeatController>();
 
@@ -72,8 +71,7 @@ public class PlayerController : MonoBehaviour {
 					AttemptMove (0, 1);
 				} else {
 					curr_dir = dir.up;
-					animator.SetTrigger ("TurnUp");
-					isMove = true;
+					StartCoroutine(Turn("TurnUp"));
 				}
 			} else if (Input.GetKey (KeyCode.DownArrow)) {
 				isMove = false;
@@ -81,8 +79,7 @@ public class PlayerController : MonoBehaviour {
 					AttemptMove (0, -1);
 				} else {
 					curr_dir = dir.down;
-					animator.SetTrigger ("TurnDown");
-					isMove = true;
+					StartCoroutine(Turn("TurnDown"));
 				}
 			} else if (Input.GetKey (KeyCode.LeftArrow)) {
 				isMove = false;
@@ -90,8 +87,7 @@ public class PlayerController : MonoBehaviour {
 					AttemptMove (-1, 0);
 				} else {
 					curr_dir = dir.left;
-					animator.SetTrigger ("TurnRight");
-					isMove = true;
+					StartCoroutine(Turn("TurnRight"));  //Note: Left and Right animations are muddled up
 				}
 			} else if (Input.GetKey (KeyCode.RightArrow)) {
 				isMove = false;
@@ -99,8 +95,7 @@ public class PlayerController : MonoBehaviour {
 					AttemptMove (1, 0);
 				} else {
 					curr_dir = dir.right;
-					animator.SetTrigger ("TurnLeft");
-					isMove = true;
+					StartCoroutine(Turn("TurnLeft"));
 				}
 			}
 		}
@@ -121,10 +116,6 @@ public class PlayerController : MonoBehaviour {
 
 	public void AttemptMove(float moveHorizontal, float moveVertical) {
 		if (!heatController.getIsFrozen ()) {
-			audioSources[0].Play();
-
-			animator.SetTrigger("Walk");
-
 			Vector2 movement = new Vector2 (moveHorizontal * moveDistance, moveVertical * moveDistance);
 			Vector2 collisionCheck = new Vector2 ((moveDistance + collisionVector.x / 2) * moveHorizontal,
 													(moveDistance + collisionVector.y / 2) * moveVertical);
@@ -148,6 +139,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private IEnumerator Move(Vector3 end) {
+		audioSources[0].Play();
+		animator.SetTrigger("Walk");
+
 		float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
 
 		while (sqrRemainingDistance > float.Epsilon) {
@@ -156,6 +150,14 @@ public class PlayerController : MonoBehaviour {
 			sqrRemainingDistance = (transform.position - end).sqrMagnitude;
 			yield return null;
 		}
+
+		isMove = true;
+	}
+
+	private IEnumerator Turn(string trigger) {
+		animator.SetTrigger (trigger);
+
+		yield return new WaitForSeconds (0.1f);
 
 		isMove = true;
 	}
