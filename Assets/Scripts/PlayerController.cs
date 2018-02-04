@@ -15,16 +15,21 @@ public class PlayerController : MonoBehaviour {
 	private BoxCollider2D boxCollider;
 	private HeatController heatController;
 
-	private GameObject inCollisionWith = null;
-
 	private Vector2 collisionVector;
 	private float moveDistance = 1.0f;
 
 	private float moveTime = 0.125f;
-	private float moveSensitivity = 0.5f;
 	private float inverseMoveTime;
 
 	private bool isMove = true;
+
+	private float[][] direction = new float[][] {
+									new float[]{0,1},
+									new float[]{0,-1},
+									new float[]{1,0},
+									new float[]{-1,0} };
+	private enum dir {up, down, left, right};
+	private dir curr_dir = dir.down;
 
 	void Start() {
 		audioSources = GetComponents<AudioSource>();
@@ -42,67 +47,80 @@ public class PlayerController : MonoBehaviour {
 			PlayerWarningEvent ();
 		}
 
+		// Check in 4 directions for any heat sources
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			for (int i = 0; i < direction.Length; i++) {
+				float moveHorizontal = direction[i][0];
+				float moveVertical = direction[i][1];
 
-		if (inCollisionWith != null) {
-			HeatController targetHeatController = inCollisionWith.GetComponent<HeatController>();
+				Vector2 collisionCheck = new Vector2 ((moveDistance + collisionVector.x / 2) * moveHorizontal,
+					(moveDistance + collisionVector.y / 2) * moveVertical);
 
-			if (targetHeatController != null) {
-				if (inCollisionWith.CompareTag("Source")) {
-					if (Input.GetKeyDown(KeyCode.Space)) {
-						audioSources[1].Play();
-						heatController.Unfreeze(heatController, targetHeatController);
+				Vector2 start = new Vector2 (Mathf.Round(transform.position.x * 10) / 10, Mathf.Round(transform.position.y * 10) / 10);
+				Vector2 collisionEnd = start + collisionCheck;
+
+				boxCollider.enabled = false;
+				RaycastHit2D hit = Physics2D.Linecast (start, collisionEnd, blockingLayer);
+				boxCollider.enabled = true;
+
+				if (hit.transform != null) {
+					if (hit.collider.gameObject.CompareTag ("Source")) {
+						HeatController targetHeatController = hit.collider.gameObject.GetComponent<HeatController>();
+
+						if (targetHeatController == null) {
+							Debug.LogError ("Unable to find 'HeatController' script on " + hit.collider.name);
+						} else {
+							audioSources[1].Play();
+							heatController.Unfreeze(heatController, targetHeatController);
+						}
 					}
 				}
-			} else {
-				Debug.LogError("Unable to find 'HeatController' script on " + inCollisionWith.name);
 			}
 		}
 	}
 		
 	void FixedUpdate () {
-		if (Input.GetAxis ("Horizontal") > moveSensitivity) {
-			AttemptMove (1, 0);
-		} else if (Input.GetAxis ("Horizontal") < -moveSensitivity) {
-			AttemptMove (-1, 0);
-		} else if (Input.GetAxis ("Vertical") > moveSensitivity) {
-			AttemptMove (0, 1);
-		} else if (Input.GetAxis ("Vertical") < -moveSensitivity) {
-			AttemptMove (0, -1);
+		// Check if player can move
+		if (isMove && Input.anyKey) {
+			// Check orientation for turn/movement
+			if (Input.GetKey (KeyCode.UpArrow)) {
+				isMove = false;
+				if (curr_dir == dir.up) {
+					AttemptMove (0, 1);
+				} else {
+					curr_dir = dir.up;
+					StartCoroutine(Turn("TurnUp"));
+				}
+			} else if (Input.GetKey (KeyCode.DownArrow)) {
+				isMove = false;
+				if (curr_dir == dir.down) {
+					AttemptMove (0, -1);
+				} else {
+					curr_dir = dir.down;
+					StartCoroutine(Turn("TurnDown"));
+				}
+			} else if (Input.GetKey (KeyCode.LeftArrow)) {
+				isMove = false;
+				if (curr_dir == dir.left) {
+					AttemptMove (-1, 0);
+				} else {
+					curr_dir = dir.left;
+					StartCoroutine(Turn("TurnRight"));  //Note: Left and Right animations are muddled up
+				}
+			} else if (Input.GetKey (KeyCode.RightArrow)) {
+				isMove = false;
+				if (curr_dir == dir.right) {
+					AttemptMove (1, 0);
+				} else {
+					curr_dir = dir.right;
+					StartCoroutine(Turn("TurnLeft"));
+				}
+			}
 		}
-	}
-
-	void EnterCollision(Collider2D other) {
-		if (other.gameObject.CompareTag("Wall")) {
-			return;
-		} else {
-			inCollisionWith = other.gameObject;
-			//Debug.Log ("In collision with " + inCollisionWith.name);
-		}
-	}
-
-	private void ResetCollision() {
-		inCollisionWith = null;
 	}
 
 	public void AttemptMove(float moveHorizontal, float moveVertical) {
-		if (!heatController.getIsFrozen () && isMove) {
-			audioSources[0].Play();
-
-			if (moveHorizontal != 0) {
-				if (moveHorizontal > 0) {
-					animator.SetTrigger ("WalkLeft");
-				} else {
-					animator.SetTrigger ("WalkRight");
-				}
-				moveVertical = 0;
-			} else {
-				if (moveVertical > 0) {
-					animator.SetTrigger ("WalkUp");
-				} else {
-					animator.SetTrigger ("WalkDown");
-				}
-			}
-
+		if (!heatController.getIsFrozen ()) {
 			Vector2 movement = new Vector2 (moveHorizontal * moveDistance, moveVertical * moveDistance);
 			Vector2 collisionCheck = new Vector2 ((moveDistance + collisionVector.x / 2) * moveHorizontal,
 													(moveDistance + collisionVector.y / 2) * moveVertical);
@@ -116,16 +134,17 @@ public class PlayerController : MonoBehaviour {
 			boxCollider.enabled = true;
 
 			if (hit.transform == null) {
-				isMove = false;
-				ResetCollision();
 				StartCoroutine(Move (end));
 			} else {
-				EnterCollision(hit.collider);
+				isMove = true;
 			}
 		}
 	}
 
 	private IEnumerator Move(Vector3 end) {
+		audioSources[0].Play();
+		animator.SetTrigger("Walk");
+
 		float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
 
 		while (sqrRemainingDistance > float.Epsilon) {
@@ -135,6 +154,12 @@ public class PlayerController : MonoBehaviour {
 			yield return null;
 		}
 
+		isMove = true;
+	}
+
+	private IEnumerator Turn(string trigger) {
+		animator.SetTrigger (trigger);
+		yield return new WaitForSeconds (0.1f);
 		isMove = true;
 	}
 
